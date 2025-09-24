@@ -1,14 +1,14 @@
 {
 	"info": {
-		"_postman_id": "2d822950-efc4-4b94-b5aa-9bcb3fa17a4a",
-		"name": "hermanos-ws",
+		"_postman_id": "d49eda7c-d3b4-4df7-8f45-dc46d6cba4a9",
+		"name": "core-nodejs-api-mongodb",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38179626",
-		"_collection_link": "https://colaborators.postman.co/workspace/vdanviel-working~1e4d6387-35a0-40b3-b7d4-28a6d9f26e2e/collection/38179626-2d822950-efc4-4b94-b5aa-9bcb3fa17a4a?action=share&source=collection_link&creator=38179626"
+		"_collection_link": "https://colaborators.postman.co/workspace/vdanviel-working~1e4d6387-35a0-40b3-b7d4-28a6d9f26e2e/collection/38179626-d49eda7c-d3b4-4df7-8f45-dc46d6cba4a9?action=share&source=collection_link&creator=38179626"
 	},
 	"item": [
 		{
-			"name": "user",
+			"name": "customer",
 			"item": [
 				{
 					"name": "register",
@@ -34,13 +34,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/register",
+							"raw": "{{API_URL}}/v1/customer/register",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"register"
 							]
 						}
@@ -71,13 +71,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/login",
+							"raw": "{{API_URL}}/v1/customer/login",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"login"
 							]
 						}
@@ -115,13 +115,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/update",
+							"raw": "{{API_URL}}/v1/customer/update",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"update"
 							]
 						}
@@ -152,13 +152,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/forgot-password/mail",
+							"raw": "{{API_URL}}/v1/customer/forgot-password/mail",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"forgot-password",
 								"mail"
 							]
@@ -191,13 +191,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/update-password",
+							"raw": "{{API_URL}}/v1/customer/update-password",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"update-password"
 							]
 						}
@@ -235,13 +235,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/change-email/mail",
+							"raw": "{{API_URL}}/v1/customer/change-email/mail",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"change-email",
 								"mail"
 							]
@@ -267,13 +267,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/change-email",
+							"raw": "{{API_URL}}/v1/customer/change-email",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"change-email"
 							]
 						}
@@ -296,13 +296,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_URL}}/v1/user/me",
+							"raw": "{{API_URL}}/v1/customer/me",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"me"
 							]
 						}
@@ -318,13 +318,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_URL}}/v1/user/token/54ff73cc-8264-4ab3-9c63-0423c136fec2",
+							"raw": "{{API_URL}}/v1/customer/token/54ff73cc-8264-4ab3-9c63-0423c136fec2",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"token",
 								"54ff73cc-8264-4ab3-9c63-0423c136fec2"
 							]
@@ -358,13 +358,13 @@
 							"raw": "{\n    \"email\": \"eucreio119@gmail.com\",\n    \"password\": \"password\"\n}"
 						},
 						"url": {
-							"raw": "{{API_URL}}/v1/user/toogle-status",
+							"raw": "{{API_URL}}/v1/customer/toogle-status",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"v1",
-								"user",
+								"customer",
 								"toogle-status"
 							]
 						}
@@ -425,40 +425,6 @@
 					"response": []
 				}
 			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "API_URL",
-			"value": "https://redesigned-engine-wqgq5rjxg49f59xv-3000.app.github.dev",
-			"type": "string"
-		},
-		{
-			"value": "",
-			"type": "string",
-			"disabled": true
 		}
 	]
 }
