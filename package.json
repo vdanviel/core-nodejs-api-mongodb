@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VivaTShirt/api.git"
+    "url": "https://github.com/vdanviel/core-nodejs-api-mongodb"
   },
   "author": "Victor Daniel",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/VivaTShirt/api/issues"
+    "url": "https://github.com/vdanviel/core-nodejs-api-mongodb/issues"
   },
-  "homepage": "https://github.com/VivaTShirt/api#readme",
+  "homepage": "https://github.com/vdanviel/core-nodejs-api-mongodb#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
