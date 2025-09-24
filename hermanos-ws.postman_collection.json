@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "2d822950-efc4-4b94-b5aa-9bcb3fa17a4a",
+		"name": "hermanos-ws",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38179626",
+		"_collection_link": "https://colaborators.postman.co/workspace/vdanviel-working~1e4d6387-35a0-40b3-b7d4-28a6d9f26e2e/collection/38179626-2d822950-efc4-4b94-b5aa-9bcb3fa17a4a?action=share&source=collection_link&creator=38179626"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"stuff\",\n    \"email\": \"stuffshopecommerce@gmail.com\",\n    \"password\": \"password\",\n    \"phone\": \"11 992838289\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/register",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"eucreio119@gmail.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/login",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo2LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNDU4MTNmNzgtODUzNS00MjZjLWJiYWItOWRhNzMyZGU0YTVjIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiJ9LCJpYXQiOjE3NTMzNzM4NDQsImV4cCI6MTc1MzUzNTg0NH0.I1A9akZCbiGcaBYSbY0dryyLITvXzMeJtY2N8AtRs1o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"vdanviel\",\n    \"phone\": \"11 998288333\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/update",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mail forgot password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"stuffshopecommerce@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/forgot-password/mail",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"forgot-password",
+								"mail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"26875\",\r\n    \"secret\": \"4be63dd0-a54b-475d-bbb2-b2133f1ef229\",\r\n    \"old_password\": \"password\",\r\n    \"new_password\": \"password\"   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/update-password",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mail change user email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo2LCJuYW1lIjoidmRhbnZpZWwiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5ODI4ODMzMyIsInRva2VuIjoiNDU4MTNmNzgtODUzNS00MjZjLWJiYWItOWRhNzMyZGU0YTVjIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MjA6MjMuMDAwWiJ9LCJpYXQiOjE3NTMzNzQwNzUsImV4cCI6MTc1MzUzNjA3NX0.KfCpiDOuQ84_nVwWuH4b6kq6MzCDFZVfVJIYkWFRTJk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"new_email\": \"eucreio119@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/change-email/mail",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"change-email",
+								"mail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change email",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"66196\",\r\n    \"secret\": \"949a7174-85c9-4fc4-8574-bec90040c3d3\",\r\n    \"new_email\": \"eucreio119@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/change-email",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"change-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo1LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNTRmZjczY2MtODI2NC00YWIzLTljNjMtMDQyM2MxMzZmZWMyIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInBhc3N3b3JkIjoiJDJiJDEwJGkvT0JCTFlYVUxZTnRoaFBRLm9zNXVSQVcySXI0Tkl4Vms4TWwvL2xTUHA4dFdhWllqZkZxIn0sImlhdCI6MTc1MzMwOTczNiwiZXhwIjoxNzUzNDcxNzM2fQ.R-PcdGl8-24eaKXxUaeOHtYuKbpe9uNsH_kr9Y4py2k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/v1/user/me",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user by token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/v1/user/token/54ff73cc-8264-4ab3-9c63-0423c136fec2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"token",
+								"54ff73cc-8264-4ab3-9c63-0423c136fec2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "toogle status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo1LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNTRmZjczY2MtODI2NC00YWIzLTljNjMtMDQyM2MxMzZmZWMyIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiJ9LCJpYXQiOjE3NTMzNzEyMDUsImV4cCI6MTc1MzUzMzIwNX0.J8A99NFZuvjQ7WcvkcGsyzbGAlz6Snbf1yjFwFGBGJE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"eucreio119@gmail.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/v1/user/toogle-status",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"toogle-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "acess_token",
+			"item": [
+				{
+					"name": "veirify code",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/v1/token/code/verify/26875",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"token",
+								"code",
+								"verify",
+								"26875"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "veirify secret",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/v1/token/secret/verify/0d0ca2ca-2fea-4598-a21e-9cc2271ce97a",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"v1",
+								"token",
+								"secret",
+								"verify",
+								"0d0ca2ca-2fea-4598-a21e-9cc2271ce97a"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "https://redesigned-engine-wqgq5rjxg49f59xv-3000.app.github.dev",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}

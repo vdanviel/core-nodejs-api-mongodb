@@ -1,0 +1,6 @@
+node_modules
+.vscode
+.env
+database.sqlite
+.git
+package-lock.json
