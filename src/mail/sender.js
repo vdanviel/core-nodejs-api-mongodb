@@ -26,7 +26,7 @@ class MailSender {
                 .replaceAll("{name}", name || "")
                 .replaceAll("{company}", this.appName);
             
-            await mailManager.sendEmail(email, name || "", "Bem vindo a Hermanos!", plainHTML);
+            await mailManager.sendEmail(email, name || "", "Bem vindo a " + this.appName + "!", plainHTML);
             console.log(`Email de boas-vindas enviado para: ${email}`);
         } catch (error) {
             console.error('Erro ao enviar email de boas-vindas:', error);
@@ -50,7 +50,7 @@ class MailSender {
                 replace("{code}", code).
                 replaceAll("{company}", this.appName);
 
-            await mailManager.sendEmail(email, name, "Redefinição de Senha Hermanos", plainHTML);
+            await mailManager.sendEmail(email, name, "Redefinição de Senha " + this.appName + "!", plainHTML);
             console.log(`Email de redefinição de senha enviado para: ${email}`);
         } catch (error) {
             console.error('Erro ao enviar email de redefinição de senha:', error);
@@ -78,7 +78,7 @@ class MailSender {
                 .replaceAll("{secret}", secretWord)
                 .replaceAll("{company}", this.appName);
             
-            await mailManager.sendEmail(newEmail, name, "Confirmação de Mudança de Email, Hermanos", plainHTML);
+            await mailManager.sendEmail(newEmail, name, "Confirmação de Mudança de Email " + this.appName + "!",plainHTML);
             console.log(`Email de confirmação de mudança enviado para: ${newEmail}`);
         } catch (error) {
             console.error('Erro ao enviar email de confirmação de mudança:', error);
