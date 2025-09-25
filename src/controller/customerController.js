@@ -68,7 +68,7 @@ class Controller {
             }
         }
 
-        // Remove password antes de retornar
+        // Remove password e token antes de retornar
         delete newCustomer.password;
         delete newCustomer.token;
         
@@ -97,7 +97,7 @@ class Controller {
             return { error: "A senha é inválida." };
         }
 
-        // Cria JWT
+        // Cria JWT sem o password
         const { password: _, ...customerWithoutPassword } = foundCustomer;//retirar a seha do obj
 
         const encodedJwt = jwt.sign({
@@ -196,7 +196,7 @@ class Controller {
 
         await PersonalAccessTokenController.register(
             "forgot_password", 
-            customer._id.toString(), 
+            customer._id, 
             customer.name, 
             secretWord, 
             generatedCode, 
@@ -217,7 +217,7 @@ class Controller {
 
     async changePassword(oldPassword, newPassword, code, secret) {
 
-        const personalAT = await PersonalAccessTokenController.verifyByCode(code);
+        const personalAT = await PersonalAccessTokenController.verifyByCode(code);        
 
         if(personalAT.error){
             return personalAT;
@@ -230,10 +230,7 @@ class Controller {
             }
         }
 
-        const customer = await Customer.findOne({
-            where: { _id: personalAT.tokenable_id },
-            attributes: { include: ['password'] }
-        });
+        const customer = await Customer.findOne({ _id: new ObjectId(personalAT.tokenable_id) });        
 
         if(customer == null){
             return {
@@ -246,11 +243,7 @@ class Controller {
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(newPassword, salt);
 
-            customer.update({
-                password: hash
-            });
-
-            customer.save();
+            await Customer.updateOne({ _id: new ObjectId(customer._id)},{ $set: {password: hash} });
 
             //deletar codigo de recuperação antes de retornar para usuario..
             await PersonalAccessTokenController.deleteAllRelated(customer._id);
@@ -269,14 +262,14 @@ class Controller {
 
     // envia email com código para mudança de email
     async sendChangeEmailCode(customerId, newEmail) {
-        const customer = await Customer.findOne({ where: { _id: customerId } });
+        const customer = await Customer.findOne({ _id: new ObjectId(customerId) });
 
         if (!customer) {
             return { error: "Usuário não existe." };
         }
 
         // Verifica se o novo email já está em uso
-        const emailExists = await Customer.findOne({ where: { email: newEmail } });
+        const emailExists = await Customer.findOne({ email: newEmail });
         if (emailExists) {
             return { error: "Este email já está em uso." };
         }
@@ -307,7 +300,7 @@ class Controller {
     }
 
     // altera o email do usuário após validação
-    async changeEmail(email, code, secret) {
+    async changeEmail(currentCustomerId ,email, code, secret) {
 
         const personalAT = await PersonalAccessTokenController.verifyByCode(code);
 
@@ -319,22 +312,29 @@ class Controller {
             return { error: "Falha na validação de segurança. (SCRT)" };
         }
 
-        const customer = await Customer.findOne({ where: { _id: personalAT.tokenable_id } });
+        const customer = await Customer.findOne({ _id: new ObjectId(personalAT.tokenable_id) });
 
         if (!customer) {
             return { error: "Usuário não existe." };
+        }
+        console.log(customer._id, currentCustomerId);
+        
+        if (customer._id != currentCustomerId) {
+            return { error: "Identity not confirmed." };
         }
 
         const newEmail = email;
 
         // Verifica se o novo email já está em uso
-        const emailExists = await Customer.findOne({ where: { email: newEmail } });
+        const emailExists = await Customer.findOne({ email: newEmail });
         if (emailExists) {
             return { error: "Este email já está em uso." };
         }
 
-        await customer.update({ email: newEmail });
-        await customer.save();
+        await Customer.updateOne(
+            { _id: new ObjectId(personalAT.tokenable_id) },
+            { $set: { email: newEmail, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
+        );
 
         await PersonalAccessTokenController.deleteAllRelated(customer._id);
 

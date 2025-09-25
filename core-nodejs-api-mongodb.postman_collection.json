@@ -26,7 +26,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"stuff\",\n    \"email\": \"stuffshopecommerce@gmail.com\",\n    \"password\": \"password\",\n    \"phone\": \"11 992838289\"\n}",
+							"raw": "{\n    \"name\": \"stuff\",\n    \"email\": \"eucreio119@gmail.com\",\n    \"password\": \"password\",\n    \"phone\": \"11 992838289\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -92,7 +92,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo2LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNDU4MTNmNzgtODUzNS00MjZjLWJiYWItOWRhNzMyZGU0YTVjIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiJ9LCJpYXQiOjE3NTMzNzM4NDQsImV4cCI6MTc1MzUzNTg0NH0.I1A9akZCbiGcaBYSbY0dryyLITvXzMeJtY2N8AtRs1o",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY4ZDQ4OGNiMTJiMDAzOGQ2OWRiYTJjNSIsIm5hbWUiOiJzdHVmZiIsImVtYWlsIjoidmljdG9yZG4uYXJhdWpvQGdtYWlsLmNvbSIsInBob25lIjoiMTEgOTkyODM4Mjg5IiwidG9rZW4iOiIzMDVhYmEzOS01YWQ0LTRiNDQtOThiZi1kN2UxNTM2MjFiNDYiLCJzdGF0dXMiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDktMjQgMjE6MTEiLCJ1cGRhdGVkQXQiOiIyMDI1LTA5LTI0IDIxOjExIn0sInNjb3BlIjpbInJlYWQ6Y3VzdG9tZXIiLCJyZWFkOmJhcmJlciJdLCJpYXQiOjE3NTg3NjA0MjUsImV4cCI6MTc1OTk3MDAyNX0.fx2dqS375AEj34uh2l0AMDyxaU8lwKuJw-wf8NBhd3s",
 									"type": "string"
 								}
 							]
@@ -144,7 +144,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"stuffshopecommerce@gmail.com\"\n}",
+							"raw": "{\n    \"email\": \"eucreio119@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -170,20 +170,13 @@
 					"name": "change password",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"26875\",\r\n    \"secret\": \"4be63dd0-a54b-475d-bbb2-b2133f1ef229\",\r\n    \"old_password\": \"password\",\r\n    \"new_password\": \"password\"   \r\n}",
+							"raw": "{\r\n    \"code\": \"53103\",\r\n    \"secret\": \"51cc336e-be5e-4823-aab1-2571d2c35821\",\r\n    \"old_password\": \"password\",\r\n    \"new_password\": \"password\"   \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -212,7 +205,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo2LCJuYW1lIjoidmRhbnZpZWwiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5ODI4ODMzMyIsInRva2VuIjoiNDU4MTNmNzgtODUzNS00MjZjLWJiYWItOWRhNzMyZGU0YTVjIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MTY6MjUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjRUMTY6MjA6MjMuMDAwWiJ9LCJpYXQiOjE3NTMzNzQwNzUsImV4cCI6MTc1MzUzNjA3NX0.KfCpiDOuQ84_nVwWuH4b6kq6MzCDFZVfVJIYkWFRTJk",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY4ZDQ5NjBiY2I5NzZjODA1ODViMGQ1OCIsIm5hbWUiOiJzdHVmZiIsImVtYWlsIjoidmljdG9yLnNpbHZhMjk4QGZhdGVjLnNwLmdvdi5iciIsInBob25lIjoiMTEgOTkyODM4Mjg5IiwidG9rZW4iOiI4ZjlhOWEyZS1kMzBmLTRkMzYtYTdiNy1iMDljODUyODg0N2QiLCJzdGF0dXMiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDktMjQgMjI6MDgiLCJ1cGRhdGVkQXQiOiIyMDI1LTA5LTI1IDAwOjIyIn0sInNjb3BlIjpbInJlYWQ6Y3VzdG9tZXIiLCJyZWFkOmJhcmJlciJdLCJpYXQiOjE3NTg3NzA4MjAsImV4cCI6MTc1OTk4MDQyMH0.XrpmU-QoMpyVJZarWg_i_ep2bxIBwSR8VuCVBPMmlgU",
 									"type": "string"
 								}
 							]
@@ -253,13 +246,20 @@
 					"name": "change email",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY4ZDQ5NjBiY2I5NzZjODA1ODViMGQ1OCIsIm5hbWUiOiJzdHVmZiIsImVtYWlsIjoidmljdG9yLnNpbHZhMjk4QGZhdGVjLnNwLmdvdi5iciIsInBob25lIjoiMTEgOTkyODM4Mjg5IiwidG9rZW4iOiI4ZjlhOWEyZS1kMzBmLTRkMzYtYTdiNy1iMDljODUyODg0N2QiLCJzdGF0dXMiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMDktMjQgMjI6MDgiLCJ1cGRhdGVkQXQiOiIyMDI1LTA5LTI1IDAwOjIyIn0sInNjb3BlIjpbInJlYWQ6Y3VzdG9tZXIiLCJyZWFkOmJhcmJlciJdLCJpYXQiOjE3NTg3NzA4MjAsImV4cCI6MTc1OTk4MDQyMH0.XrpmU-QoMpyVJZarWg_i_ep2bxIBwSR8VuCVBPMmlgU",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"66196\",\r\n    \"secret\": \"949a7174-85c9-4fc4-8574-bec90040c3d3\",\r\n    \"new_email\": \"eucreio119@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"code\": \"29042\",\r\n    \"secret\": \"41cad465-fd1f-417c-8ad5-13a0bf6a5e40\",\r\n    \"new_email\": \"eucreio119@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -288,7 +288,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo1LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNTRmZjczY2MtODI2NC00YWIzLTljNjMtMDQyM2MxMzZmZWMyIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInBhc3N3b3JkIjoiJDJiJDEwJGkvT0JCTFlYVUxZTnRoaFBRLm9zNXVSQVcySXI0Tkl4Vms4TWwvL2xTUHA4dFdhWllqZkZxIn0sImlhdCI6MTc1MzMwOTczNiwiZXhwIjoxNzUzNDcxNzM2fQ.R-PcdGl8-24eaKXxUaeOHtYuKbpe9uNsH_kr9Y4py2k",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY4ZDQ5NjBiY2I5NzZjODA1ODViMGQ1OCIsIm5hbWUiOiJzdHVmZiIsImVtYWlsIjoiZXVjcmVpbzExOUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiOGY5YTlhMmUtZDMwZi00ZDM2LWE3YjctYjA5Yzg1Mjg4NDdkIiwic3RhdHVzIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDI1LTA5LTI0IDIyOjA4IiwidXBkYXRlZEF0IjoiMjAyNS0wOS0yNSAwMDoyOSJ9LCJzY29wZSI6WyJyZWFkOmN1c3RvbWVyIiwicmVhZDpiYXJiZXIiXSwiaWF0IjoxNzU4NzcxNDA3LCJleHAiOjE3NTk5ODEwMDd9.ztPJz0qiI6PAGkWM-iHwtjJ2KoHLds4ZlmYO7OiT7v4",
 									"type": "string"
 								}
 							]
@@ -318,7 +318,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_URL}}/v1/customer/token/54ff73cc-8264-4ab3-9c63-0423c136fec2",
+							"raw": "{{API_URL}}/v1/customer/token/8f9a9a2e-d30f-4d36-a7b7-b09c8528847d",
 							"host": [
 								"{{API_URL}}"
 							],
@@ -326,7 +326,7 @@
 								"v1",
 								"customer",
 								"token",
-								"54ff73cc-8264-4ab3-9c63-0423c136fec2"
+								"8f9a9a2e-d30f-4d36-a7b7-b09c8528847d"
 							]
 						}
 					},
@@ -340,7 +340,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo1LCJuYW1lIjoic3R1ZmYiLCJlbWFpbCI6InN0dWZmc2hvcGVjb21tZXJjZUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiNTRmZjczY2MtODI2NC00YWIzLTljNjMtMDQyM2MxMzZmZWMyIiwic3RhdHVzIjp0cnVlLCJwcm92aWRlciI6Im1hbnVhbCIsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjNUMjI6Mjg6MzUuMDAwWiJ9LCJpYXQiOjE3NTMzNzEyMDUsImV4cCI6MTc1MzUzMzIwNX0.J8A99NFZuvjQ7WcvkcGsyzbGAlz6Snbf1yjFwFGBGJE",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY4ZDQ5NjBiY2I5NzZjODA1ODViMGQ1OCIsIm5hbWUiOiJzdHVmZiIsImVtYWlsIjoiZXVjcmVpbzExOUBnbWFpbC5jb20iLCJwaG9uZSI6IjExIDk5MjgzODI4OSIsInRva2VuIjoiOGY5YTlhMmUtZDMwZi00ZDM2LWE3YjctYjA5Yzg1Mjg4NDdkIiwic3RhdHVzIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDI1LTA5LTI0IDIyOjA4IiwidXBkYXRlZEF0IjoiMjAyNS0wOS0yNSAwMDoyOSJ9LCJzY29wZSI6WyJyZWFkOmN1c3RvbWVyIiwicmVhZDpiYXJiZXIiXSwiaWF0IjoxNzU4NzcxNDA3LCJleHAiOjE3NTk5ODEwMDd9.ztPJz0qiI6PAGkWM-iHwtjJ2KoHLds4ZlmYO7OiT7v4",
 									"type": "string"
 								}
 							]
@@ -353,10 +353,6 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"eucreio119@gmail.com\",\n    \"password\": \"password\"\n}"
-						},
 						"url": {
 							"raw": "{{API_URL}}/v1/customer/toogle-status",
 							"host": [
@@ -385,7 +381,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_URL}}/v1/token/code/verify/26875",
+							"raw": "{{API_URL}}/v1/token/code/verify/53103",
 							"host": [
 								"{{API_URL}}"
 							],
@@ -394,7 +390,7 @@
 								"token",
 								"code",
 								"verify",
-								"26875"
+								"53103"
 							]
 						}
 					},
@@ -425,6 +421,13 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

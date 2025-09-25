@@ -129,14 +129,14 @@ customerRouter.patch('/change-email', [
     body('code').exists().withMessage("Código é obrigatório.").notEmpty().withMessage("Preencha o código."),
     body('secret').exists().withMessage("Secret é obrigatório.").notEmpty().withMessage("Preencha o secret."),
     body('new_email').exists().withMessage("Novo email é obrigatório.").isEmail().withMessage("Email inválido.").notEmpty().withMessage("Preencha o novo email."),
-], (req, res) => {
+], isAuth, (req, res) => {
     const validate = validationResult(req);
 
     if (!validate.isEmpty()) {
         return res.send({ missing: validate.array() });
     }
 
-    CustomerController.changeEmail(req.body.new_email, req.body.code, req.body.secret)
+    CustomerController.changeEmail(req.auth.data._id, req.body.new_email, req.body.code, req.body.secret)
     .then(result => {return res.send(result)})
     .catch(error => {return res.status(500).send({ error: error.message })});
 });
@@ -171,7 +171,7 @@ customerRouter.patch('/update-password/', [
         body('code').exists().withMessage("Code field is missed.").notEmpty().withMessage("Fill security code field."),
         body('old_password').exists().withMessage("Senha antiga é obrigatória.").notEmpty().withMessage("Preencha a senha antiga."),
         body('new_password').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha."),
-        body('secret').exists().withMessage("Secret is required.").notEmpty().withMessage("Fill secret filed.")
+        body('secret').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha.")
     ], (req, res) => {
 
         const validate = validationResult(req);

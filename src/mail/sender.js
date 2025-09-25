@@ -67,7 +67,7 @@ class MailSender {
      */
     async sendEmailChangeConfirmation(newEmail, name, code, secretWord) {
         try {
-            const templateFilePath = path.join(this.templatePath, 'changeEmailManager.html');
+            const templateFilePath = path.join(this.templatePath, 'changeEmail.html');
             const content = await fs.promises.readFile(templateFilePath, 'utf8');
 
             const plainHTML = content.toString()
