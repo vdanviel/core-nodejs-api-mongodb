@@ -17,7 +17,7 @@ const isAuth = (req, res, next) => {
             return res.status(403).json({ jwt_timeout: 'Invalid or expired token.' });
         }
         
-        req.user = decoded;
+        req.auth = decoded;
         next();
     });
 };

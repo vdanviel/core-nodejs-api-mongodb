@@ -1,239 +1,348 @@
-import express from "express";
-import { isAuth } from "../middleware/auth.js";
-import { body, validationResult, param } from "express-validator";
-import { CustomerController } from "../controller/customerController.js";
+import { Customer } from "../model/customer.js";
+import Util from "../util/util.js";
+import { sender as mailSender } from "../mail/sender.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from 'uuid';
+import { PersonalAccessTokenController } from "./personalAccessTokenController.js";
+import { ObjectId } from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const customerRouter = express.Router();
+class Controller {
 
-customerRouter.get('/me', isAuth, (req, res) => {
-    
-    CustomerController.find(req.auth.data._id)
-    .then(customer => {
+    async find(customerId){
+        try {
+            const foundCustomer = await Customer.findOne({ _id: new ObjectId(customerId) });
+            
+            if (!foundCustomer) {
+                return { error: "Não há usuário." };
+            }
+            
+            // Remove a senha do objeto retornado
+            const { password, ...customerWithoutPassword } = foundCustomer;
+            return customerWithoutPassword;
+            
+        } catch (error) {
+            return { error: "ID inválido." };
+        }
+    }
 
-        return res.send(customer);
+    async register(name, email, password, phone, token = null){
+        // Verifica se email já existe
+        if (email) {
+            const existingCustomer = await Customer.findOne({ email });
+            if (existingCustomer) {
+                return { error: "Usuário já existe." };
+            }
+        }
 
-    })
-    .catch(error => {
-        return res.status(500).send({ 
-            error: error.message
-        });
-    });
+        // Cria hash da senha
+        let hash = null;
+        if (password) {
+            const salt = bcrypt.genSaltSync(10);
+            hash = bcrypt.hashSync(password, salt);
+        }
 
-});
+        const customerToken = token ?? uuidv4();
+        const newCustomer = {
+            name: name || null,
+            email: email || null,
+            phone: phone,
+            password: hash,
+            token: customerToken,
+            status: true,
+            createdAt: Util.currentDateTime('America/Sao_Paulo'),
+            updatedAt: Util.currentDateTime('America/Sao_Paulo')
+        };
 
-customerRouter.post('/register', [
-        body('name').exists().withMessage("Nome é obrigatório.").notEmpty().withMessage("Preencha o nome."),
-        body('email').exists().withMessage("Email é obrigatório.").isEmail().withMessage("Email Inválido.").notEmpty().withMessage("Preencha o email."),
-        body('phone').exists().withMessage("Celular é obrigatório.").isMobilePhone('pt-BR').withMessage("Número celular inválido.").notEmpty().withMessage("Preencha o celular."),
-        body('password').exists().withMessage("Senha é obrigatória.").notEmpty().withMessage("Preencha a senha."),
-    ], (req, res) => {
-    
-        const validate = validationResult(req);
+        await Customer.insertOne(newCustomer);
 
-        if (validate.isEmpty() == false) {
-            return res.send({
-                missing: validate.array()
-            });
+        // Envia email de boas vindas se foi fornecido email
+        if (email) {
+            try {
+                await mailSender.sendUserWelcomeEmail(email, name);
+            } catch (error) {
+                console.error('Erro ao enviar email de boas-vindas:', error);
+                // Não falha a criação do usuário se o email falhar
+            }
+        }
+
+        // Remove password antes de retornar
+        delete newCustomer.password;
+        delete newCustomer.token;
+        
+        return newCustomer;
+    }
+
+    async findCustomerByToken(customerToken){
+        const foundCustomer = await Customer.findOne({ token: customerToken });
+        
+        if (!foundCustomer) {
+            return { error: "Não há usuário." };
         }
         
-        CustomerController.register(req.body.name, req.body.email, req.body.password,req.body.phone)
-        .then(register => {
-            return res.send(register);
-        })
-        .catch(error => {
-            return res.status(500).send({ 
-                error: error.message
-            });
-        });
+        const { password, ...customerWithoutPassword } = foundCustomer;
+        return customerWithoutPassword;
+    }
 
-});
-
-customerRouter.post('/login', [
-        body('email').exists().withMessage("Email é obrigatório.").isEmail().withMessage("Email Inválido.").notEmpty().withMessage("Preencha o email."),
-        body('password').exists().withMessage("Senha é obrigatória.").notEmpty().withMessage("Preencha a senha.")
-    ], (req, res) => {
+    async login(email, password){
+        const foundCustomer = await Customer.findOne({ email });
         
-        const validate = validationResult(req);
-
-        if (validate.isEmpty() == false) {
-            return res.send({missing: validate.array()});
-        }        
-
-        CustomerController.login(req.body.email, req.body.password)
-        .then(login => {       
-            return res.send(login);
-        }).catch(error => {
-            return res.status(500).send({ 
-                error: error.message
-            });
-        });
-
-});
-
-customerRouter.put('/update', [
-    body('name').exists().withMessage("Nome é obrigatório.").notEmpty().withMessage("Preencha o nome."),
-    body('phone').exists().withMessage("Celular é obrigatório.").isMobilePhone('pt-BR').withMessage("Número celular inválido.").notEmpty().withMessage("Preencha o celular."),
-], isAuth, (req, res) => {
-
-        const validate = validationResult(req);
-
-        if (validate.isEmpty() == false) {
-            return res.send({
-                missing: validate.array()
-            });
+        if (!foundCustomer) {
+            return { error: "Usuário não existe." };
+        }
+        
+        if (!bcrypt.compareSync(password, foundCustomer.password)) {
+            return { error: "A senha é inválida." };
         }
 
-        CustomerController.update(req.auth.data._id, req.body.name, req.body.phone)
-        .then(customer => {
-            return res.send(customer);
-        }).catch(error => {
-            return res.status(500).send({ 
-                error: error.message
-            });
-        });
+        // Cria JWT
+        const { password: _, ...customerWithoutPassword } = foundCustomer;//retirar a seha do obj
 
-});
+        const encodedJwt = jwt.sign({
+            data: customerWithoutPassword,
+            scope: ["read:customer", "read:barber"]
+        }, process.env.JWT_SECRET, { expiresIn: '336h' });
 
-// customerRouter.delete('/delete/:id', [
-//         param('id').exists().withMessage("O ID do usuário é obrigatório.").notEmpty().withMessage("Preencha o ID do usuário.")
-//     ], isAuth, (req, res) => {
-
-//         CustomerController.delete(req.params.id)
-//         .then(customer => {
-//             return res.send(customer);
-//         }).catch(error => {
-//             return res.status(500).send({ 
-//                 error: error.message,
-//  //             });
-//         });
-
-// });
-
-// Envia código para mudança de email
-customerRouter.post('/change-email/mail', [
-    body('new_email').exists().withMessage("Novo email é obrigatório.").isEmail().withMessage("Email inválido.").notEmpty().withMessage("Preencha o novo email."),
-], isAuth, (req, res) => {
-    const validate = validationResult(req);
-
-    if (!validate.isEmpty()) {
-        return res.send({ missing: validate.array() });
+        return { access_token: encodedJwt };
     }
 
-    CustomerController.sendChangeEmailCode(req.auth.data._id, req.body.new_email)
-    .then(result => {return res.send(result)})
-    .catch(error => {return res.status(500).send({ error: error.message })});
-});
+    async update(customerId, name, phone){
+        try {
+            const result = await Customer.updateOne(
+                { _id: new ObjectId(customerId) },
+                { 
+                    $set: { 
+                        name,
+                        phone,
+                        updatedAt: Util.currentDateTime('America/Sao_Paulo')
+                    }
+                }
+            );
 
-// Altera o email do usuário após validação
-customerRouter.patch('/change-email', [
-    body('code').exists().withMessage("Código é obrigatório.").notEmpty().withMessage("Preencha o código."),
-    body('secret').exists().withMessage("Secret é obrigatório.").notEmpty().withMessage("Preencha o secret."),
-    body('new_email').exists().withMessage("Novo email é obrigatório.").isEmail().withMessage("Email inválido.").notEmpty().withMessage("Preencha o novo email."),
-], (req, res) => {
-    const validate = validationResult(req);
+            if (result.matchedCount === 0) {
+                return { error: "Usuário não existe." };
+            }
 
-    if (!validate.isEmpty()) {
-        return res.send({ missing: validate.array() });
+            return await this.find(customerId);
+        } catch (error) {
+            return { error: "ID inválido." };
+        }
     }
 
-    CustomerController.changeEmail(req.body.new_email, req.body.code, req.body.secret)
-    .then(result => {return res.send(result)})
-    .catch(error => {return res.status(500).send({ error: error.message })});
-});
+    async delete(customerId){
+        try {
+            const result = await Customer.deleteOne({ _id: new ObjectId(customerId) });
+            
+            if (result.deletedCount === 0) {
+                return { error: "Usuário não existe." };
+            }
 
-//envia email de recuperação de senha
-customerRouter.post('/forgot-password/mail', [
-    body('email').exists().withMessage("Email é obrigatório.").notEmpty().withMessage("Preencha o email."),
-], (req, res) => {
-
-    const validate = validationResult(req);
-
-    if (validate.isEmpty() == false) {
-        return res.send({
-            missing: validate.array()
-        });
+            return { message: "Usuário deletado com sucesso." };
+        } catch (error) {
+            return { error: "ID inválido." };
+        }
     }
 
-    CustomerController.sendForgotPasswordCode(req.body.email).then((result) => {
+    async findByEmail(customerEmail){
+        const foundCustomer = await Customer.findOne({ email: customerEmail });
+        
+        if (!foundCustomer) {
+            return { error: "Não há usuário." };
+        }
+        
+        const { password, ...customerWithoutPassword } = foundCustomer;
+        return customerWithoutPassword;
+    }
 
-        return res.send(result);
+    async toggleStatus(customerId) {
+        try {
+            const customer = await Customer.findOne({ _id: new ObjectId(customerId) });
+            
+            if (!customer) {
+                return { error: "Usuário não encontrado." };
+            }
 
-    }).catch(error => {
-        return res.status(500).send({ 
-            error: error.message
-        });
-    });
+            const newStatus = !customer.status;
 
-});
+            await Customer.updateOne(
+                { _id: new ObjectId(customerId) },
+                { 
+                    $set: { 
+                        status: newStatus,
+                        updatedAt: Util.currentDateTime('America/Sao_Paulo')
+                    }
+                }
+            );
 
-//atualiza a  senha do usuário usando o codigo
-customerRouter.patch('/update-password/', [
-        body('code').exists().withMessage("Code field is missed.").notEmpty().withMessage("Fill security code field."),
-        body('old_password').exists().withMessage("Senha antiga é obrigatória.").notEmpty().withMessage("Preencha a senha antiga."),
-        body('new_password').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha."),
-        body('secret').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha.")
-    ], (req, res) => {
+            return { message: `Usuário ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
+        } catch (error) {
+            return { error: "ID inválido." };
+        }
+    }
 
-        const validate = validationResult(req);
-
-        if (validate.isEmpty() == false) {
-            return res.send({
-                missing: validate.array()
-            });
+    //enviar email com código para recuperação de senha
+    async sendForgotPasswordCode(email) {
+        const customer = await Customer.findOne({ email });
+        
+        if (!customer) {
+            return { error: "Usuário não existe." };
         }
 
-        CustomerController.changePassword(req.body.old_password, req.body.new_password, req.body.code, req.body.secret)
-        .then(customer => {
-            return res.send(customer);
-        }).catch(error => {
-            return res.status(500).send({ 
-                error: error.message,
+        const generatedCode = Util.generateCode(5);
+        const secretWord = uuidv4();
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1hr
+
+        await PersonalAccessTokenController.register(
+            "forgot_password", 
+            customer._id.toString(), 
+            customer.name, 
+            secretWord, 
+            generatedCode, 
+            null, 
+            Date.now(), 
+            expiresAt
+        );
+
+        try {
+            await mailSender.sendPasswordResetEmail(customer.email, customer.name, generatedCode);
+        } catch (error) {
+            console.error('Erro ao enviar email de redefinição de senha:', error);
+            throw new Error('Falha ao enviar email de redefinição de senha');
+        }
+
+        return { message: "O código de redefinição de senha foi enviado ao e-mail com sucesso." };
+    }
+
+    async changePassword(oldPassword, newPassword, code, secret) {
+
+        const personalAT = await PersonalAccessTokenController.verifyByCode(code);
+
+        if(personalAT.error){
+            return personalAT;
+        }
+
+        //se o secret for diferente não pode mudar
+        if (personalAT.secret !== secret) {
+            return {
+                error: "Falha na validação de segurança. (SCRT)"
+            }
+        }
+
+        const customer = await Customer.findOne({
+            where: { id: personalAT.tokenable_id },
+            attributes: { include: ['password'] }
+        });
+
+        if(customer == null){
+            return {
+                "error": "Usuário não existe."
+            };
+        }
+
+        if(bcrypt.compareSync(oldPassword, customer.password) == true){
+
+            const salt = bcrypt.genSaltSync(10);
+            const hash = bcrypt.hashSync(newPassword, salt);
+
+            customer.update({
+                password: hash
             });
-        });
 
-});
+            customer.save();
 
-//acha o usuário pelo token dele
-customerRouter.get('/token/:token', [
-    param('token').exists().withMessage("O token do usuário é obrigatório.").notEmpty().withMessage("Preencha o token do usuário.")
-], (req, res) => {
+            //deletar codigo de recuperação antes de retornar para usuario..
+            await PersonalAccessTokenController.deleteAllRelated(customer.id);
 
-    const validate = validationResult(req);
+            return {
+                message: "Senha alterada com sucesso."
+            };
 
-    if (validate.isEmpty() == false) {
-        return res.send({
-            missing: validate.array()
-        });
+        }else{
+            return {
+                "error": "A senha antiga é inválida."
+            };
+        }
+
     }
 
-    CustomerController.findCustomerByToken(req.params.token).then((customer) => {
-        res.send(customer);
-    }).catch(error => {
-        return res.status(500).send({ 
-            error: error.message
-        });
-    });
+    // envia email com código para mudança de email
+    async sendChangeEmailCode(customerId, newEmail) {
+        const customer = await Customer.findOne({ where: { id: customerId } });
 
-});
+        if (!customer) {
+            return { error: "Usuário não existe." };
+        }
 
-//ativa/desativa usuario
-customerRouter.patch('/toogle-status', isAuth, (req, res) => {
-    const validate = validationResult(req);
+        // Verifica se o novo email já está em uso
+        const emailExists = await Customer.findOne({ where: { email: newEmail } });
+        if (emailExists) {
+            return { error: "Este email já está em uso." };
+        }
 
-    if (!validate.isEmpty()) {
-        return res.status(400).send({
-            missing: validate.array()
-        });
+        const generatedCode = Util.generateCode(5);
+        const secretWord = uuidv4();
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1hr
+
+        await PersonalAccessTokenController.register(
+            "change_email",
+            customer.id,
+            newEmail,
+            secretWord,
+            generatedCode,
+            null,
+            Date.now(),
+            expiresAt
+        );
+
+        try {
+            await mailSender.sendEmailChangeConfirmation(newEmail, customer.name, generatedCode, secretWord);
+        } catch (error) {
+            console.error('Erro ao enviar email de confirmação de mudança:', error);
+            throw new Error('Falha ao enviar email de confirmação de mudança');
+        }
+
+        return { message: "O código de confirmação foi enviado ao novo e-mail com sucesso." };
     }
 
-    CustomerController.toggleStatus(req.auth.data._id)
-    .then(result => {
-        return res.send(result);
-    }).catch(error => {
-        return res.status(500).send({ 
-            error: error.message
-        });
-    });
-});
+    // altera o email do usuário após validação
+    async changeEmail(email, code, secret) {
 
-export {customerRouter};
+        const personalAT = await PersonalAccessTokenController.verifyByCode(code);
+
+        if (personalAT.error) {
+            return personalAT;
+        }
+
+        if (personalAT.secret !== secret) {
+            return { error: "Falha na validação de segurança. (SCRT)" };
+        }
+
+        const customer = await Customer.findOne({ where: { id: personalAT.tokenable_id } });
+
+        if (!customer) {
+            return { error: "Usuário não existe." };
+        }
+
+        const newEmail = email;
+
+        // Verifica se o novo email já está em uso
+        const emailExists = await Customer.findOne({ where: { email: newEmail } });
+        if (emailExists) {
+            return { error: "Este email já está em uso." };
+        }
+
+        await customer.update({ email: newEmail });
+        await customer.save();
+
+        await PersonalAccessTokenController.deleteAllRelated(customer.id);
+
+        return { message: "Email alterado com sucesso." };
+    }
+
+
+}
+
+const CustomerController = new Controller();
+export { CustomerController };

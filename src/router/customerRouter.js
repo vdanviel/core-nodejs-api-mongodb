@@ -6,8 +6,8 @@ import { CustomerController } from "../controller/customerController.js";
 const customerRouter = express.Router();
 
 customerRouter.get('/me', isAuth, (req, res) => {
-
-    CustomerController.find(req.customer.data.id)
+    
+    CustomerController.find(req.auth.data._id)
     .then(customer => {
 
         return res.send(customer);
@@ -83,7 +83,7 @@ customerRouter.put('/update', [
             });
         }
 
-        CustomerController.update(req.customer.data.id, req.body.name, req.body.phone)
+        CustomerController.update(req.auth.data._id, req.body.name, req.body.phone)
         .then(customer => {
             return res.send(customer);
         }).catch(error => {
@@ -119,7 +119,7 @@ customerRouter.post('/change-email/mail', [
         return res.send({ missing: validate.array() });
     }
 
-    CustomerController.sendChangeEmailCode(req.customer.data.id, req.body.new_email)
+    CustomerController.sendChangeEmailCode(req.auth.data._id, req.body.new_email)
     .then(result => {return res.send(result)})
     .catch(error => {return res.status(500).send({ error: error.message })});
 });
@@ -226,7 +226,7 @@ customerRouter.patch('/toogle-status', isAuth, (req, res) => {
         });
     }
 
-    CustomerController.toggleStatus(req.customer.data.id)
+    CustomerController.toggleStatus(req.auth.data._id)
     .then(result => {
         return res.send(result);
     }).catch(error => {
