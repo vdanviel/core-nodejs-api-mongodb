@@ -34,7 +34,7 @@ app.use("/v1", cors(corsOptions), version1Router);
 //main
 app.get('/', (req, res) => {
 
-  return res.send("API V1 HERMANOS API");
+  return res.send("API V1 CORENODEJS API");
 
 });
 
