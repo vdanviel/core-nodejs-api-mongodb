@@ -6,5 +6,5 @@ class Controller {
 	
 }
 
-// Substitua '__TitleModuleName__' pelo model desejado ao gerar controller real
-export { Controller };
+const __ModuleName__Controller = new Controller();
+export { __ModuleName__Controller };
