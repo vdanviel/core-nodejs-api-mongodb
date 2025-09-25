@@ -171,7 +171,7 @@ customerRouter.patch('/update-password/', [
         body('code').exists().withMessage("Code field is missed.").notEmpty().withMessage("Fill security code field."),
         body('old_password').exists().withMessage("Senha antiga é obrigatória.").notEmpty().withMessage("Preencha a senha antiga."),
         body('new_password').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha."),
-        body('secret').exists().withMessage("Nova senha é obrigatória.").notEmpty().withMessage("Preencha a nova senha.")
+        body('secret').exists().withMessage("Secret is required.").notEmpty().withMessage("Fill secret filed.")
     ], (req, res) => {
 
         const validate = validationResult(req);

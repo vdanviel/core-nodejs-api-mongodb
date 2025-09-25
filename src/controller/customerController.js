@@ -231,7 +231,7 @@ class Controller {
         }
 
         const customer = await Customer.findOne({
-            where: { id: personalAT.tokenable_id },
+            where: { _id: personalAT.tokenable_id },
             attributes: { include: ['password'] }
         });
 
@@ -253,7 +253,7 @@ class Controller {
             customer.save();
 
             //deletar codigo de recuperação antes de retornar para usuario..
-            await PersonalAccessTokenController.deleteAllRelated(customer.id);
+            await PersonalAccessTokenController.deleteAllRelated(customer._id);
 
             return {
                 message: "Senha alterada com sucesso."
@@ -269,7 +269,7 @@ class Controller {
 
     // envia email com código para mudança de email
     async sendChangeEmailCode(customerId, newEmail) {
-        const customer = await Customer.findOne({ where: { id: customerId } });
+        const customer = await Customer.findOne({ where: { _id: customerId } });
 
         if (!customer) {
             return { error: "Usuário não existe." };
@@ -287,7 +287,7 @@ class Controller {
 
         await PersonalAccessTokenController.register(
             "change_email",
-            customer.id,
+            customer._id,
             newEmail,
             secretWord,
             generatedCode,
@@ -319,7 +319,7 @@ class Controller {
             return { error: "Falha na validação de segurança. (SCRT)" };
         }
 
-        const customer = await Customer.findOne({ where: { id: personalAT.tokenable_id } });
+        const customer = await Customer.findOne({ where: { _id: personalAT.tokenable_id } });
 
         if (!customer) {
             return { error: "Usuário não existe." };
@@ -336,7 +336,7 @@ class Controller {
         await customer.update({ email: newEmail });
         await customer.save();
 
-        await PersonalAccessTokenController.deleteAllRelated(customer.id);
+        await PersonalAccessTokenController.deleteAllRelated(customer._id);
 
         return { message: "Email alterado com sucesso." };
     }
