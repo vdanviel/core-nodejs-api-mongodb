@@ -21,8 +21,8 @@ class Util {
 
   static formatDate(date) {
     try {
-      const today = new Date(date);
-      return today.toLocaleDateString('pt-BR'); // Locale corrigido para pt-BR
+      const date = new Date(date);
+      return date.toLocaleDateString('pt-BR'); // Locale corrigido para pt-BR
     } catch (error) {
       throw new Error('Invalid date format provided to formatDate');
     }
