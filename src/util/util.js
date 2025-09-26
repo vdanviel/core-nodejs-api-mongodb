@@ -20,9 +20,12 @@ class Util {
   }
 
   static formatDate(date) {
-    var today  = new Date(date);
-
-    return today.toLocaleDateString("America/Sao_Paulo");
+    try {
+      const today = new Date(date);
+      return today.toLocaleDateString('pt-BR'); // Locale corrigido para pt-BR
+    } catch (error) {
+      throw new Error('Invalid date format provided to formatDate');
+    }
   }
 
   //libera a data em yyyy-mm-dd hh:ss
