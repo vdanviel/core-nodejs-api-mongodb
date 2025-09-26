@@ -27,21 +27,64 @@ class Controller {
 		return data;
 	}
 
-	async update(__ModuleName__Id, value1, value2, value3) {
-		// Atualiza registro
-		data.updatedAt = new Date();
-		const result = await __TitleModuleName__.updateOne(
-			{ _id: new ObjectId(__ModuleName__Id) },
-			{ $set: {
-                value_1: value1,
-                value_2: value2,
-                value_3: value3,
-                updatedAt: Util.currentDateTime('America/Sao_Paulo')
-            } }
-		);
-		if (result.matchedCount === 0) return { error: "Não encontrado." };
-		return await this.find(id);
-	}
+    async update(__ModuleName__Id, updateData) {
+        
+        // 1. Constrói dinamicamente o objeto $set, processando apenas os valores definidos.
+        const fieldsToUpdate = Object.entries(updateData).reduce((acc, [key, value]) => {
+            // Ignora qualquer chave cujo valor seja estritamente undefined.
+            // Permite que campos sejam atualizados para `null`, `0`, `false` ou `""`.
+            if (value !== undefined) {
+                
+                // ---------------------------------------------------------------------------
+                // TODO: Adicionar lógica customizada para campos específicos (se necessário)
+                // Se o seu controller precisar de um tratamento especial para alguma chave,
+                // como buscar um ID em outra coleção, adicione a lógica aqui.
+                //
+                // Exemplo:
+                /*
+                if (key === 'algumIdDeRelacionamento') {
+                    const documentoRelacionado = OutroController.find(value);
+                    if (documentoRelacionado.error) {
+                        // Você pode decidir como lidar com o erro.
+                        // Talvez lançar uma exceção ou simplesmente não adicionar a chave.
+                        return acc; 
+                    }
+                    acc['nomeDoCampoPopulado'] = documentoRelacionado;
+                } else {
+                    acc[key] = value;
+                }
+                */
+                // ---------------------------------------------------------------------------
+
+                // Para o template base, simplesmente adicionamos a chave e o valor.
+                acc[key] = value;
+            }
+
+            return acc;
+        }, {});
+
+        // 2. Se nenhum campo válido foi enviado para atualização, retorna o documento original.
+        if (Object.keys(fieldsToUpdate).length === 0) {
+            console.log("Nenhum campo para atualizar foi fornecido.");
+            return await this.find(__ModuleName__Id); 
+        }
+
+        // 3. Adiciona a data de atualização em toda modificação bem-sucedida.
+        fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
+
+        // 4. Executa a atualização no banco de dados.
+        const result = await __TitleModuleName__.updateOne(
+            { _id: new ObjectId(__ModuleName__Id) },
+            { $set: fieldsToUpdate }
+        );
+
+        if (result.matchedCount === 0) {
+            return { error: "Não encontrado." };
+        }
+
+        // 5. Retorna o documento recém-atualizado para confirmar as alterações.
+        return await this.find(__ModuleName__Id);
+    }
 
 	async delete(__ModuleName__Id) {
 		// Deleta registro
