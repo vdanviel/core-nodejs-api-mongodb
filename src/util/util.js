@@ -21,10 +21,10 @@ class Util {
 
   static formatDate(date) {
     try {
-      const date = new Date(date);
-      return date.toLocaleDateString('pt-BR'); // Locale corrigido para pt-BR
+      const formattedDate = new Date(date + "T00:00:00Z"); // força UTC
+      return formattedDate.toLocaleDateString("pt-BR", { timeZone: "UTC" });
     } catch (error) {
-      throw new Error('Invalid date format provided to formatDate');
+      throw new Error("Invalid date format provided to formatDate");
     }
   }
 
