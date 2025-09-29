@@ -190,8 +190,8 @@ Com os comandos `ação:module`, é possível gerenciar automaticamente toda a e
 
 | Comando                                  | Descrição                        | Exemplo                                                  |
 |------------------------------------------|----------------------------------|----------------------------------------------------------|
-| `-- generate:module <name>`                 | Cria um novo módulo básico        | `npm run corenode -- generate:module user`                  |
-| `-- generate:module <name> --mode complete` | Cria um módulo completo (MVC)     | `npm run corenode -- generate:module auth --mode complete`  |
+| `-- generate:module <name>`                 | Cria um novo módulo vazio        | `npm run corenode -- generate:module user`                  |
+| `-- generate:module <name> --mode complete` | Cria um módulo preparado     | `npm run corenode -- generate:module auth --mode complete`  |
 | `-- remove:module <name>`                   | Remove um módulo existente        | `npm run corenode -- remove:module user`                    |
 | `-- list:module`                            | Lista todos os módulos criados    | `npm run corenode -- list:module`                           |
 
