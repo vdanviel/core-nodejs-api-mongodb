@@ -307,8 +307,8 @@ Se estiver é retornado o erro 403 Forbidden (`res.status(403).json({ jwt_timeou
 Se não estiver, ela vai guardar os dados do usuário em `req.user.data`, é possível acessar esse dado em todas as rota que tem o `isAuth` como middleware.
 
 Lembre-se, os responses que esse middleware pode gerar em casos de erros são:
-`{ jwt_missing: 'No token provided.' }` - caso o JWT não tenha sido passado no header Bearer Token.
-`{ jwt_timeout: 'Invalid or expired token.' }` - caso o JWT tenha sido passado, porém é inválido ou expirado.
+- `{ jwt_missing: 'No token provided.' }`, caso o JWT não tenha sido passado no header Bearer Token.
+- `{ jwt_timeout: 'Invalid or expired token.' }`, caso o JWT tenha sido passado, porém é inválido ou expirado.
 
 Exemplo:
 ```javascript
