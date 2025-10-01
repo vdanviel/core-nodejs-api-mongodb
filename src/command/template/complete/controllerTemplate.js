@@ -10,6 +10,29 @@ class Controller {
 		return __ModuleName__;
 	}
 
+    async all(page = 1, size = 10) {
+
+        page = parseInt(page);
+        size = parseInt(size);
+
+        const skip = (page - 1) * size;
+
+        const __ModuleName__ = await __TitleModuleName__.find({}).skip(skip).limit(size).toArray();
+
+        const qyt = __ModuleName__.length;
+        const total = await __TitleModuleName__.countDocuments({});
+
+		if (__ModuleName__.length == 0 ) return { error: "Não há __ModuleName__s registrados(a)." };
+
+		return {
+			data: __ModuleName__,
+			total: total,
+            quantity: qyt,
+			totalPages: Math.ceil(total / size)
+		};
+
+    }
+
 	async create(value1, value2, value3) {
 
         const data = {
@@ -27,11 +50,19 @@ class Controller {
 		return data;
 	}
 
-    async update(__ModuleName__Id, updateData) {
+    async update(__ModuleName__Id, value1, value2, value3) {
+
+        // Dados que podem ser atualizados
+        const updateData = {
+            value_1: value1,
+            value_2: value2,
+            value_3: value3
+            // Adicione outros campos que podem ser atualizados aqui...
+        };
         
         // 1. Constrói dinamicamente o objeto $set, processando apenas os valores definidos.
         const fieldsToUpdate = Object.entries(updateData).reduce((acc, [key, value]) => {
-            // Ignora qualquer chave cujo valor seja estritamente undefined.
+            // Ignora qualquer chave cujo valor seja estritamente undefined, ou seja, não está sendo atualizada.
             // Permite que campos sejam atualizados para `null`, `0`, `false` ou `""`.
             if (value !== undefined) {
                 

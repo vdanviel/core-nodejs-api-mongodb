@@ -1,7 +1,7 @@
 
 import express from "express";
 import { __ModuleName__Controller } from "../controller/__ModuleName__Controller.js";
-import { body, validationResult } from "express-validator";
+import { query, body, validationResult } from "express-validator";
 
 const __ModuleName__Router = express.Router();
 
@@ -20,6 +20,20 @@ const validateDataUpdated = [
 // Buscar por ID
 __ModuleName__Router.get('/:id', (req, res) => {
 	__ModuleName__Controller.find(req.params.id)
+		.then(result => {
+			res.send(result);
+		})
+		.catch(error => {
+			res.status(500).send({ error: error.message });
+		});
+});
+
+// Buscar todos paginado
+__ModuleName__Router.get('/', [
+	query('page').optional().exists().withMessage('O page precisa estar presente.'),
+	query('size').optional().exists().withMessage('O size precisa estar presente.')
+], (req, res) => {
+	__ModuleName__Controller.all(req.query.page, req.query.size)
 		.then(result => {
 			res.send(result);
 		})
