@@ -190,8 +190,8 @@ Com os comandos `ação:module`, é possível gerenciar automaticamente toda a e
 
 | Comando                                  | Descrição                        | Exemplo                                                  |
 |------------------------------------------|----------------------------------|----------------------------------------------------------|
-| `-- generate:module <name>`                 | Cria um novo módulo básico        | `npm run corenode -- generate:module user`                  |
-| `-- generate:module <name> --mode complete` | Cria um módulo completo (MVC)     | `npm run corenode -- generate:module auth --mode complete`  |
+| `-- generate:module <name>`                 | Cria um novo módulo vazio        | `npm run corenode -- generate:module user`                  |
+| `-- generate:module <name> --mode complete` | Cria um módulo preparado     | `npm run corenode -- generate:module auth --mode complete`  |
 | `-- remove:module <name>`                   | Remove um módulo existente        | `npm run corenode -- remove:module user`                    |
 | `-- list:module`                            | Lista todos os módulos criados    | `npm run corenode -- list:module`                           |
 
@@ -305,6 +305,10 @@ export {isAuth};
 Esse middleware vai verificar se a hash JWT está presente e se está expirada.
 Se estiver é retornado o erro 403 Forbidden (`res.status(403).json({ jwt_timeout: 'Invalid or expired token.' });`).
 Se não estiver, ela vai guardar os dados do usuário em `req.user.data`, é possível acessar esse dado em todas as rota que tem o `isAuth` como middleware.
+
+Lembre-se, os responses que esse middleware pode gerar em casos de erros são:
+- `{ jwt_missing: 'No token provided.' }`, caso o JWT não tenha sido passado no header Bearer Token.
+- `{ jwt_timeout: 'Invalid or expired token.' }`, caso o JWT tenha sido passado, porém é inválido ou expirado.
 
 Exemplo:
 ```javascript
