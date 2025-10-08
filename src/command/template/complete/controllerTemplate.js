@@ -10,17 +10,25 @@ class Controller {
 		return __ModuleName__;
 	}
 
-    async all(page = 1, size = 10) {
+    async all(page = 1, size = 10, search = '') {
 
         page = parseInt(page);
         size = parseInt(size);
 
         const skip = (page - 1) * size;
 
-        const __ModuleName__ = await __TitleModuleName__.find({}).skip(skip).limit(size).toArray();
+        const filter = search ? {
+            $or: [
+                { value_1: { $regex: new RegExp(search, 'i') } },
+                { value_2: { $regex: new RegExp(search, 'i') } },
+                { value_3: { $regex: new RegExp(search, 'i') } }
+            ]
+        } : {};
+
+        const __ModuleName__ = await __TitleModuleName__.find(filter).skip(skip).limit(size).toArray();
 
         const qyt = __ModuleName__.length;
-        const total = await __TitleModuleName__.countDocuments({});
+        const total = await __TitleModuleName__.countDocuments(filter);
 
 		if (__ModuleName__.length == 0 ) return { error: "Não há __ModuleName__s registrados(a)." };
 
@@ -28,7 +36,7 @@ class Controller {
 			data: __ModuleName__,
 			total: total,
             quantity: qyt,
-			totalPages: Math.ceil(total / size)
+           	totalPages: Math.ceil(total / size)
 		};
 
     }
@@ -43,9 +51,7 @@ class Controller {
             createdAt: Util.currentDateTime('America/Sao_Paulo'),
             updatedAt: Util.currentDateTime('America/Sao_Paulo')
         };
-
-        //restante dos dados...
-
+        
 		await __TitleModuleName__.insertOne(data);
 		return data;
 	}

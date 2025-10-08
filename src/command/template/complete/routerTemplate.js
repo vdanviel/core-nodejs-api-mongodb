@@ -31,9 +31,10 @@ __ModuleName__Router.get('/:id', (req, res) => {
 // Buscar todos paginado
 __ModuleName__Router.get('/', [
 	query('page').optional().exists().withMessage('O page precisa estar presente.'),
-	query('size').optional().exists().withMessage('O size precisa estar presente.')
+	query('size').optional().exists().withMessage('O size precisa estar presente.'),
+	query('search').optional().exists().withMessage('O search precisa estar presente.')
 ], (req, res) => {
-	__ModuleName__Controller.all(req.query.page, req.query.size)
+	__ModuleName__Controller.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
 		})
