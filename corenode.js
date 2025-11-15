@@ -1,38 +1,43 @@
 // ferramenta command line para gerar arquitetura de modulos de forma automatica e mais
 
 import { ModuleGenerator } from "./src/command/generator/moduleGenerator.js";
-import { Command } from "commander";
+import { Command } from 'commander';
 
 const program = new Command();
 
+//module commands...
+const moduleCommand = program.command('module')
+  .description('Module commands');
+
 // gerar modulo
-program.command('generate:module')
+moduleCommand.command('generate <name>')
   .description('Generate new module')
   .argument('<name>', 'name of the module')
   .option('--mode <mode>', 'mode of the module (e.g., empty or complete)')
-  .action((name, options) => {
+  .action((name, opt) => {
 
     const generator = new ModuleGenerator();
     
-    generator.generate(name, options.mode || 'empty');
+    generator.generate(name, opt || 'empty');
 
   });
 
 // remover modulo
-program.command('remove:module')
+moduleCommand.command('remove') // Mudança aqui! De 'remove' para 'rm'
   .description('Remove an existing module')
   .argument('<name>', 'name of the module to remove')
   .action((name) => {
 
     const generator = new ModuleGenerator();
 
-    generator.remove(name);
+    // A lógica de remoção permanece a mesma, apenas o comando mudou
+    generator.remove(name); 
 
   });
 
 // listar modulos
-program.command('list:module')
-  .description('List modeules')
+moduleCommand.command('list')
+  .description('List modules')
   .action(async () => {
 
     const generator = new ModuleGenerator();

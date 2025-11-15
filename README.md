@@ -182,7 +182,7 @@ npm run corenode
 ### Geração de módulos (module)
 
 Um módulo reúne os elementos principais do padrão MVC: **Model**, **Controller** e **Router**.  
-Com os comandos `ação:module`, é possível gerenciar automaticamente toda a estrutura de um módulo, acelerando o desenvolvimento e eliminando etapas repetitivas.
+Com os comandos `module <ação>`, é possível gerenciar automaticamente toda a estrutura de um módulo, acelerando o desenvolvimento e eliminando etapas repetitivas.
 
 ---
 
@@ -190,10 +190,10 @@ Com os comandos `ação:module`, é possível gerenciar automaticamente toda a e
 
 | Comando                                  | Descrição                        | Exemplo                                                  |
 |------------------------------------------|----------------------------------|----------------------------------------------------------|
-| `-- generate:module <name>`                 | Cria um novo módulo vazio        | `npm run corenode -- generate:module user`                  |
-| `-- generate:module <name> --mode complete` | Cria um módulo preparado     | `npm run corenode -- generate:module auth --mode complete`  |
-| `-- remove:module <name>`                   | Remove um módulo existente        | `npm run corenode -- remove:module user`                    |
-| `-- list:module`                            | Lista todos os módulos criados    | `npm run corenode -- list:module`                           |
+| `module generate user`                 | Cria um novo módulo vazio        | `npm run corenode module generate user`                  |
+| `module generate <name> --mode complete` | Cria um módulo preparado     | `npm run corenode module generate user --mode complete`  |
+| `module remove <name>`                   | Remove um módulo existente        | `npm run corenode module remove user`                    |
+| `module list`                            | Lista todos os módulos criados    | `npm run corenode module list`                           |
 
 ## Como a API é versionada em RESTFULL:
 
@@ -424,6 +424,3 @@ Assim que o projeto for iniciado ele vai criar o **banco de dados** automaticame
 - Integrações
 - SOLID
 - camelCase
-
-
-
