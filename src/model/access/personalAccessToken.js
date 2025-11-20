@@ -1,4 +1,4 @@
-import { database } from "../connection/database.js";
+import { database } from "../../connection/database.js";
 
 class PersonalAccessTokenModel {
   constructor() {

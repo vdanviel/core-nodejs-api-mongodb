@@ -1,5 +1,4 @@
-import { PersonalAccessToken } from "../model/personalAccessToken.js";
-import { ObjectId } from 'mongodb';
+import { PersonalAccessToken } from "../../model/access/personalAccessToken.js";
 
 class Controller {
 

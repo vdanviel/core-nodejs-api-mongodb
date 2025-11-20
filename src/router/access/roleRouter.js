@@ -1,25 +1,27 @@
 
 import express from "express";
-import { __ModuleName__Controller } from "../controller/__ModuleName__Controller.js";
+import { roleController } from "../controller/access/roleController.js";
 import { query, body, validationResult } from "express-validator";
+import { checkScope } from "../../middleware/scope.js";
+import { isAuth } from "../../middleware/auth.js";
 
-const __ModuleName__Router = express.Router();
+const roleRouter = express.Router();
 
 const validateData = [
-	body('value1').exists().withMessage('O value1 é obrigatório'),
-	body('value2').exists().withMessage('O value2 é obrigatório'),
-	body('value3').exists().withMessage('O value3 é obrigatório')	
+	body('name').exists().withMessage('O name é obrigatório'),
+	body('permissions').exists().withMessage('O permissions é obrigatório'),
+	body('description').exists().withMessage('O description é obrigatório')	
 ];
 
 const validateDataUpdated = [
-	body('value1').optional().exists().withMessage('O value1 é obrigatório'),
-	body('value2').optional().exists().withMessage('O value2 é obrigatório'),
-	body('value3').optional().exists().withMessage('O value3 é obrigatório')	
+	body('name').optional().exists().withMessage('O name é obrigatório'),
+	body('permissions').optional().exists().withMessage('O permissions é obrigatório'),
+	body('description').optional().exists().withMessage('O description é obrigatório')	
 ];
 
 // Buscar por ID
-__ModuleName__Router.get('/:id', (req, res) => {
-	__ModuleName__Controller.find(req.params.id)
+roleRouter.get('/:id', isAuth(), checkScope(['read:role']), (req, res) => {
+	roleController.find(req.params.id)
 		.then(result => {
 			res.send(result);
 		})
@@ -30,12 +32,12 @@ __ModuleName__Router.get('/:id', (req, res) => {
 });
 
 // Buscar todos paginado
-__ModuleName__Router.get('/', [
+roleRouter.get('/', [
 	query('page').optional().exists().withMessage('O page precisa estar presente.'),
 	query('size').optional().exists().withMessage('O size precisa estar presente.'),
 	query('search').optional().exists().withMessage('O search precisa estar presente.')
-], (req, res) => {
-	__ModuleName__Controller.all(req.query.page, req.query.size, req.query.search)
+], isAuth(), checkScope(['read:role']), (req, res) => {
+	roleController.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
 		})
@@ -46,7 +48,7 @@ __ModuleName__Router.get('/', [
 });
 
 // Criar novo registro
-__ModuleName__Router.post('/register', validateData, (req, res) => {
+roleRouter.post('/register', validateData, isAuth(), checkScope(['write:role']), (req, res) => {
 
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
@@ -54,8 +56,8 @@ __ModuleName__Router.post('/register', validateData, (req, res) => {
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	const { value1, value2, value3 } = req.body;
-	__ModuleName__Controller.create(value1, value2, value3)
+	const { name, permissions, description } = req.body;
+	roleController.create(name, permissions, description)
 		.then(result => {
 			res.send(result);
 		})
@@ -66,7 +68,7 @@ __ModuleName__Router.post('/register', validateData, (req, res) => {
 });
 
 // Atualizar registro
-__ModuleName__Router.put('/update/:id', validateDataUpdated, (req, res) => {
+roleRouter.put('/update/:id', isAuth(), checkScope(['update:role']), validateDataUpdated, (req, res) => {
 
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
@@ -74,20 +76,8 @@ __ModuleName__Router.put('/update/:id', validateDataUpdated, (req, res) => {
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	const { value1, value2, value3 } = req.body;
-	__ModuleName__Controller.update(req.params.id, value1, value2, value3)
-		.then(result => {
-			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
-		});
-});
-
-// Deletar registro
-__ModuleName__Router.delete('/delete/:id', (req, res) => {
-	__ModuleName__Controller.delete(req.params.id)
+	const { name, permissions, description } = req.body;
+	roleController.update(req.params.id, name, permissions, description)
 		.then(result => {
 			res.send(result);
 		})
@@ -98,8 +88,8 @@ __ModuleName__Router.delete('/delete/:id', (req, res) => {
 });
 
 // Alternar status
-__ModuleName__Router.patch('/toggle-status/:id', (req, res) => {
-	__ModuleName__Controller.toggleStatus(req.params.id)
+roleRouter.patch('/toggle-status/:id', isAuth(), checkScope(['read:update']), (req, res) => {
+	roleController.toggleStatus(req.params.id)
 		.then(result => {
 			res.send(result);
 		})
@@ -109,4 +99,4 @@ __ModuleName__Router.patch('/toggle-status/:id', (req, res) => {
 		});
 });
 
-export { __ModuleName__Router };
+export { roleRouter };

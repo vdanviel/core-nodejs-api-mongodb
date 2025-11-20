@@ -1,10 +1,13 @@
 import { Customer } from "../model/customer.js";
+import { PersonalAccessTokenController } from "./access/personalAccessTokenController.js";
+import { authController } from "./access/authController.js";
+import { roleController } from "./access/roleController.js";
+
 import Util from "../util/util.js";
 import { sender as mailSender } from "../mail/sender.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
-import { PersonalAccessTokenController } from "./personalAccessTokenController.js";
 import { ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -16,7 +19,9 @@ class Controller {
             const foundCustomer = await Customer.findOne({ _id: new ObjectId(customerId) });
             
             if (!foundCustomer) {
-                return { error: "Não há usuário." };
+                const err = new Error("Não há usuário.");
+                err.status = 404;
+                throw err;
             }
             
             // Remove a senha do objeto retornado
@@ -24,16 +29,21 @@ class Controller {
             return customerWithoutPassword;
             
         } catch (error) {
-            return { error: "ID inválido." };
+            if (error.status) throw error;
+            const err = new Error("ID inválido.");
+            err.status = 400;
+            throw err;
         }
     }
 
-    async register(name, email, password, phone, token = null){
+    async register(name, email, password, phone){
         // Verifica se email já existe
         if (email) {
             const existingCustomer = await Customer.findOne({ email });
             if (existingCustomer) {
-                return { error: "Usuário já existe." };
+                const err = new Error("Usuário já existe.");
+                err.status = 409;
+                throw err;
             }
         }
 
@@ -44,13 +54,11 @@ class Controller {
             hash = bcrypt.hashSync(password, salt);
         }
 
-        const customerToken = token ?? uuidv4();
         const newCustomer = {
             name: name || null,
             email: email || null,
             phone: phone,
             password: hash,
-            token: customerToken,
             status: true,
             createdAt: Util.currentDateTime('America/Sao_Paulo'),
             updatedAt: Util.currentDateTime('America/Sao_Paulo')
@@ -68,42 +76,57 @@ class Controller {
             }
         }
 
-        // Remove password e token antes de retornar
+        // Remove password antes de retornar
         delete newCustomer.password;
-        delete newCustomer.token;
         
         return newCustomer;
     }
 
-    async findCustomerByToken(customerToken){
-        const foundCustomer = await Customer.findOne({ token: customerToken });
-        
-        if (!foundCustomer) {
-            return { error: "Não há usuário." };
-        }
-        
-        const { password, ...customerWithoutPassword } = foundCustomer;
-        return customerWithoutPassword;
-    }
-
-    async login(email, password){
+    async login(email, password, ip, userAgent){
         const foundCustomer = await Customer.findOne({ email });
         
         if (!foundCustomer) {
-            return { error: "Usuário não existe." };
+            const err = new Error("Usuário não existe.");
+            err.status = 401;
+            throw err;
         }
         
         if (!bcrypt.compareSync(password, foundCustomer.password)) {
-            return { error: "A senha é inválida." };
+            const err = new Error("A senha é inválida.");
+            err.status = 401;
+            throw err;
         }
 
         // Cria JWT sem o password
         const { password: _, ...customerWithoutPassword } = foundCustomer;//retirar a seha do obj
 
-        const encodedJwt = jwt.sign({
-            data: customerWithoutPassword,
-            scope: ["read:customer", "read:barber"]
-        }, process.env.JWT_SECRET, { expiresIn: '336h' });
+        //gerando o auth ataul..
+        const currentAuth = await authController.create(
+            customerWithoutPassword._id,
+            ip,
+            userAgent,
+            "login"
+        )
+
+        //achar as roles associada ao tipo de usuário (customer) que no caso é "customer-role"
+        const role = await roleController.find("customer-role");
+
+        //verificar se vai encontrar o o segredo JWT...
+        const secret = process.env.JWT_SECRET;
+
+        if (!secret) {
+            const err = new Error("JWT secret is not configured.");
+            err.status = 500;
+            throw err;
+        }
+
+        //aqui ele vai criar o objeto "data" a partir do auth ou seja quem será armazenado e acessado em customerRouter é o própio objeto auth
+        const encodedJwt = jwt.sign(
+        {
+            data: currentAuth,
+            scope: Array.isArray(role && role.permissions) ? role.permissions : []
+        }
+        ,secret, { expiresIn: '168h' });
 
         return { access_token: encodedJwt };
     }
@@ -122,34 +145,41 @@ class Controller {
             );
 
             if (result.matchedCount === 0) {
-                return { error: "Usuário não existe." };
+                const err = new Error("Usuário não existe.");
+                err.status = 404;
+                throw err;
             }
 
             return await this.find(customerId);
         } catch (error) {
-            return { error: "ID inválido." };
+            if (error.status) throw error;
+            const err = new Error("ID inválido.");
+            err.status = 400;
+            throw err;
         }
     }
 
-    async delete(customerId){
-        try {
-            const result = await Customer.deleteOne({ _id: new ObjectId(customerId) });
+    // async delete(customerId){
+    //     try {
+    //         const result = await Customer.deleteOne({ _id: new ObjectId(customerId) });
             
-            if (result.deletedCount === 0) {
-                return { error: "Usuário não existe." };
-            }
+    //         if (result.deletedCount === 0) {
+    //             return { error: "Usuário não existe." };
+    //         }
 
-            return { message: "Usuário deletado com sucesso." };
-        } catch (error) {
-            return { error: "ID inválido." };
-        }
-    }
+    //         return { message: "Usuário deletado com sucesso." };
+    //     } catch (error) {
+    //         return { error: "ID inválido." };
+    //     }
+    // }
 
     async findByEmail(customerEmail){
         const foundCustomer = await Customer.findOne({ email: customerEmail });
         
         if (!foundCustomer) {
-            return { error: "Não há usuário." };
+            const err = new Error("Não há usuário.");
+            err.status = 404;
+            throw err;
         }
         
         const { password, ...customerWithoutPassword } = foundCustomer;
@@ -161,7 +191,9 @@ class Controller {
             const customer = await Customer.findOne({ _id: new ObjectId(customerId) });
             
             if (!customer) {
-                return { error: "Usuário não encontrado." };
+                const err = new Error("Usuário não encontrado.");
+                err.status = 404;
+                throw err;
             }
 
             const newStatus = !customer.status;
@@ -178,7 +210,10 @@ class Controller {
 
             return { message: `Usuário ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
         } catch (error) {
-            return { error: "ID inválido." };
+            if (error.status) throw error;
+            const err = new Error("ID inválido.");
+            err.status = 400;
+            throw err;
         }
     }
 
@@ -187,7 +222,9 @@ class Controller {
         const customer = await Customer.findOne({ email });
         
         if (!customer) {
-            return { error: "Usuário não existe." };
+            const err = new Error("Usuário não existe.");
+            err.status = 404;
+            throw err;
         }
 
         const generatedCode = Util.generateCode(5);
@@ -209,7 +246,9 @@ class Controller {
             await mailSender.sendPasswordResetEmail(customer.email, customer.name, generatedCode);
         } catch (error) {
             console.error('Erro ao enviar email de redefinição de senha:', error);
-            throw new Error('Falha ao enviar email de redefinição de senha');
+            const err = new Error('Falha ao enviar email de redefinição de senha');
+            err.status = 500;
+            throw err;
         }
 
         return { message: "O código de redefinição de senha foi enviado ao e-mail com sucesso." };
@@ -220,22 +259,24 @@ class Controller {
         const personalAT = await PersonalAccessTokenController.verifyByCode(code);        
 
         if(personalAT.error){
-            return personalAT;
+            const err = new Error(personalAT.error);
+            err.status = 400;
+            throw err;
         }
 
         //se o secret for diferente não pode mudar
         if (personalAT.secret !== secret) {
-            return {
-                error: "Falha na validação de segurança. (SCRT)"
-            }
+            const err = new Error("Falha na validação de segurança. (SCRT)");
+            err.status = 403;
+            throw err;
         }
 
         const customer = await Customer.findOne({ _id: new ObjectId(personalAT.tokenable_id) });        
 
         if(customer == null){
-            return {
-                "error": "Usuário não existe."
-            };
+            const err = new Error("Usuário não existe.");
+            err.status = 404;
+            throw err;
         }
 
         if(bcrypt.compareSync(oldPassword, customer.password) == true){
@@ -253,9 +294,9 @@ class Controller {
             };
 
         }else{
-            return {
-                "error": "A senha antiga é inválida."
-            };
+            const err = new Error("A senha antiga é inválida.");
+            err.status = 401;
+            throw err;
         }
 
     }
@@ -265,13 +306,17 @@ class Controller {
         const customer = await Customer.findOne({ _id: new ObjectId(customerId) });
 
         if (!customer) {
-            return { error: "Usuário não existe." };
+            const err = new Error("Usuário não existe.");
+            err.status = 404;
+            throw err;
         }
 
         // Verifica se o novo email já está em uso
         const emailExists = await Customer.findOne({ email: newEmail });
         if (emailExists) {
-            return { error: "Este email já está em uso." };
+            const err = new Error("Este email já está em uso.");
+            err.status = 409;
+            throw err;
         }
 
         const generatedCode = Util.generateCode(5);
@@ -293,7 +338,9 @@ class Controller {
             await mailSender.sendEmailChangeConfirmation(newEmail, customer.name, generatedCode, secretWord);
         } catch (error) {
             console.error('Erro ao enviar email de confirmação de mudança:', error);
-            throw new Error('Falha ao enviar email de confirmação de mudança');
+            const err = new Error('Falha ao enviar email de confirmação de mudança');
+            err.status = 500;
+            throw err;
         }
 
         return { message: "O código de confirmação foi enviado ao novo e-mail com sucesso." };
@@ -305,22 +352,30 @@ class Controller {
         const personalAT = await PersonalAccessTokenController.verifyByCode(code);
 
         if (personalAT.error) {
-            return personalAT;
+            const err = new Error(personalAT.error);
+            err.status = 400;
+            throw err;
         }
 
         if (personalAT.secret !== secret) {
-            return { error: "Falha na validação de segurança. (SCRT)" };
+            const err = new Error("Falha na validação de segurança. (SCRT)");
+            err.status = 403;
+            throw err;
         }
 
         const customer = await Customer.findOne({ _id: new ObjectId(personalAT.tokenable_id) });
 
         if (!customer) {
-            return { error: "Usuário não existe." };
+            const err = new Error("Usuário não existe.");
+            err.status = 404;
+            throw err;
         }
         console.log(customer._id, currentCustomerId);
         
         if (customer._id != currentCustomerId) {
-            return { error: "Identity not confirmed." };
+            const err = new Error("Identity not confirmed.");
+            err.status = 403;
+            throw err;
         }
 
         const newEmail = email;
@@ -328,7 +383,9 @@ class Controller {
         // Verifica se o novo email já está em uso
         const emailExists = await Customer.findOne({ email: newEmail });
         if (emailExists) {
-            return { error: "Este email já está em uso." };
+            const err = new Error("Este email já está em uso.");
+            err.status = 409;
+            throw err;
         }
 
         await Customer.updateOne(

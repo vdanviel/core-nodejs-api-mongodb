@@ -97,7 +97,7 @@ class ModuleGenerator {
                     await fs.promises.unlink(file);
                 }
             }
-            console.log(`🗑️ Module (${name.toLowerCase()}) removed.`);
+            console.log(`🗑️  Module (${name.toLowerCase()}) removed.`);
         } catch (error) {
             throw error;
         }

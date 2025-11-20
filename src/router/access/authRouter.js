@@ -1,25 +1,26 @@
-
 import express from "express";
-import { __ModuleName__Controller } from "../controller/__ModuleName__Controller.js";
+import { authController } from "../controller/access/authController.js";
 import { query, body, validationResult } from "express-validator";
+import { checkScope } from "../../middleware/scope.js";
+import { isAuth } from "../../middleware/auth.js";
 
-const __ModuleName__Router = express.Router();
+const authRouter = express.Router();
 
 const validateData = [
-	body('value1').exists().withMessage('O value1 é obrigatório'),
-	body('value2').exists().withMessage('O value2 é obrigatório'),
-	body('value3').exists().withMessage('O value3 é obrigatório')	
+	body('sub').exists().withMessage('O sub é obrigatório'),
+	body('ip').exists().withMessage('O ip é obrigatório'),
+	body('agent').exists().withMessage('O agent é obrigatório')
 ];
 
 const validateDataUpdated = [
-	body('value1').optional().exists().withMessage('O value1 é obrigatório'),
-	body('value2').optional().exists().withMessage('O value2 é obrigatório'),
-	body('value3').optional().exists().withMessage('O value3 é obrigatório')	
+	body('sub').optional().exists().withMessage('O sub é obrigatório'),
+	body('ip').optional().exists().withMessage('O ip é obrigatório'),
+	body('agent').optional().exists().withMessage('O agent é obrigatório')
 ];
 
 // Buscar por ID
-__ModuleName__Router.get('/:id', (req, res) => {
-	__ModuleName__Controller.find(req.params.id)
+authRouter.get('/:id', isAuth(), checkScope(['read:auth']), (req, res) => {
+	authController.find(req.params.id)
 		.then(result => {
 			res.send(result);
 		})
@@ -30,12 +31,12 @@ __ModuleName__Router.get('/:id', (req, res) => {
 });
 
 // Buscar todos paginado
-__ModuleName__Router.get('/', [
+authRouter.get('/', [
 	query('page').optional().exists().withMessage('O page precisa estar presente.'),
 	query('size').optional().exists().withMessage('O size precisa estar presente.'),
 	query('search').optional().exists().withMessage('O search precisa estar presente.')
-], (req, res) => {
-	__ModuleName__Controller.all(req.query.page, req.query.size, req.query.search)
+], isAuth(), checkScope(['read:auth']), (req, res) => {
+	authController.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
 		})
@@ -46,7 +47,7 @@ __ModuleName__Router.get('/', [
 });
 
 // Criar novo registro
-__ModuleName__Router.post('/register', validateData, (req, res) => {
+authRouter.post('/register', validateData, isAuth(), checkScope(['write:auth']), (req, res) => {
 
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
@@ -54,8 +55,8 @@ __ModuleName__Router.post('/register', validateData, (req, res) => {
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	const { value1, value2, value3 } = req.body;
-	__ModuleName__Controller.create(value1, value2, value3)
+	const { sub, ip, agent } = req.body;
+	authController.create(sub, ip, agent)
 		.then(result => {
 			res.send(result);
 		})
@@ -66,7 +67,7 @@ __ModuleName__Router.post('/register', validateData, (req, res) => {
 });
 
 // Atualizar registro
-__ModuleName__Router.put('/update/:id', validateDataUpdated, (req, res) => {
+authRouter.put('/update/:id', validateDataUpdated, isAuth(), checkScope(['update:auth']),(req, res) => {
 
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
@@ -74,8 +75,8 @@ __ModuleName__Router.put('/update/:id', validateDataUpdated, (req, res) => {
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	const { value1, value2, value3 } = req.body;
-	__ModuleName__Controller.update(req.params.id, value1, value2, value3)
+	const { sub, ip, agent } = req.body;
+	authController.update(req.params.id, sub, ip, agent)
 		.then(result => {
 			res.send(result);
 		})
@@ -86,8 +87,8 @@ __ModuleName__Router.put('/update/:id', validateDataUpdated, (req, res) => {
 });
 
 // Deletar registro
-__ModuleName__Router.delete('/delete/:id', (req, res) => {
-	__ModuleName__Controller.delete(req.params.id)
+authRouter.delete('/delete/:id', isAuth(), checkScope(['delete:auth']), (req, res) => {
+	authController.delete(req.params.id)
 		.then(result => {
 			res.send(result);
 		})
@@ -97,16 +98,4 @@ __ModuleName__Router.delete('/delete/:id', (req, res) => {
 		});
 });
 
-// Alternar status
-__ModuleName__Router.patch('/toggle-status/:id', (req, res) => {
-	__ModuleName__Controller.toggleStatus(req.params.id)
-		.then(result => {
-			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
-		});
-});
-
-export { __ModuleName__Router };
+export { authRouter };

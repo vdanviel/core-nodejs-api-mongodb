@@ -1,7 +1,6 @@
 import express from "express";
-import { isAuth } from "../middleware/auth.js";
-import { body, validationResult, param } from "express-validator";
-import { PersonalAccessTokenController } from "../controller/personalAccessTokenController.js";
+import { validationResult, param } from "express-validator";
+import { PersonalAccessTokenController } from "../../controller/access/personalAccessTokenController.js";
 
 const personalAccessTokenRouter = express.Router();
 

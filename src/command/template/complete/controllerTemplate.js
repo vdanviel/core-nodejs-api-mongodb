@@ -4,10 +4,21 @@ import Util from "../util/util.js"; // Importa Util, utilitario do sistema
 
 class Controller {
 	async find(id) {
-		// Busca por ID
-		const __ModuleName__ = await __TitleModuleName__.findOne({ _id: new ObjectId(id) });
-		if (!__ModuleName__) return { error: "Não encontrado." };
-		return __ModuleName__;
+		try {
+			// Busca por ID
+			const __ModuleName__ = await __TitleModuleName__.findOne({ _id: new ObjectId(id) });
+			if (!__ModuleName__) {
+				const err = new Error("Não encontrado.");
+				err.status = 404;
+				throw err;
+			}
+			return __ModuleName__;
+		} catch (error) {
+			if (error.status) throw error;
+			const err = new Error("ID inválido.");
+			err.status = 400;
+			throw err;
+		}
 	}
 
     async all(page = 1, size = 10, search = '') {
@@ -30,7 +41,12 @@ class Controller {
         const qyt = __ModuleName__.length;
         const total = await __TitleModuleName__.countDocuments(filter);
 
-		if (__ModuleName__.length == 0 ) return { error: "Não há __ModuleName__s registrados(a)." };
+		if (__ModuleName__.length == 0) {
+			const err = new Error("Não há __ModuleName__s registrados(a).");
+			err.status = 404;
+			err.code = "no-records-found";
+			throw err;
+		}
 
 		return {
 			data: __ModuleName__,
@@ -51,13 +67,16 @@ class Controller {
             createdAt: Util.currentDateTime('America/Sao_Paulo'),
             updatedAt: Util.currentDateTime('America/Sao_Paulo')
         };
-        
+
+        //restante dos dados...
+
 		await __TitleModuleName__.insertOne(data);
 		return data;
 	}
 
     async update(__ModuleName__Id, value1, value2, value3) {
 
+        try {
         // Dados que podem ser atualizados
         const updateData = {
             value_1: value1,
@@ -93,55 +112,87 @@ class Controller {
                 */
                 // ---------------------------------------------------------------------------
 
-                // Para o template base, simplesmente adicionamos a chave e o valor.
-                acc[key] = value;
+                    // Para o template base, simplesmente adicionamos a chave e o valor.
+                    acc[key] = value;
+                }
+
+                return acc;
+            }, {});
+
+            // 2. Se nenhum campo válido foi enviado para atualização, retorna o documento original.
+            if (Object.keys(fieldsToUpdate).length === 0) {
+                console.log("Nenhum campo para atualizar foi fornecido.");
+                return await __TitleModuleName__.find(__ModuleName__Id); 
             }
 
-            return acc;
-        }, {});
+            // 3. Adiciona a data de atualização em toda modificação bem-sucedida.
+            fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
 
-        // 2. Se nenhum campo válido foi enviado para atualização, retorna o documento original.
-        if (Object.keys(fieldsToUpdate).length === 0) {
-            console.log("Nenhum campo para atualizar foi fornecido.");
-            return await this.find(__ModuleName__Id); 
+            // 4. Executa a atualização no banco de dados.
+            const result = await __TitleModuleName__.updateOne(
+                { _id: new ObjectId(__ModuleName__Id) },
+                { $set: fieldsToUpdate }
+            );
+
+            if (result.matchedCount === 0) {
+                const err = new Error("Não encontrado.");
+                err.status = 404;
+                err.code = "resource-not-found";
+                throw err;
+            }
+
+            // 5. Retorna o documento recém-atualizado para confirmar as alterações.
+            return await this.find(__ModuleName__Id);
+        } catch (error) {
+            if (error.status) throw error;
+            const err = new Error("ID inválido.");
+            err.status = 400;
+            throw err;
         }
-
-        // 3. Adiciona a data de atualização em toda modificação bem-sucedida.
-        fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
-
-        // 4. Executa a atualização no banco de dados.
-        const result = await __TitleModuleName__.updateOne(
-            { _id: new ObjectId(__ModuleName__Id) },
-            { $set: fieldsToUpdate }
-        );
-
-        if (result.matchedCount === 0) {
-            return { error: "Não encontrado." };
-        }
-
-        // 5. Retorna o documento recém-atualizado para confirmar as alterações.
-        return await this.find(__ModuleName__Id);
     }
 
 	async delete(__ModuleName__Id) {
-		// Deleta registro
-		const result = await __TitleModuleName__.deleteOne({ _id: new ObjectId(__ModuleName__Id) });
-		if (result.deletedCount === 0) return { error: "Não encontrado." };
-		return { message: "Deletado com sucesso." };
+		try {
+			// Deleta registro
+			const result = await __TitleModuleName__.deleteOne({ _id: new ObjectId(__ModuleName__Id) });
+			if (result.deletedCount === 0) {
+				const err = new Error("Não encontrado.");
+				err.status = 404;
+				err.code = "resource-not-found";
+				throw err;
+			}
+			return { message: "Deletado com sucesso." };
+		} catch (error) {
+			if (error.status) throw error;
+			const err = new Error("ID inválido.");
+			err.status = 400;
+			throw err;
+		}
 	}
 
 	async toggleStatus(__ModuleName__Id) {
-		// Alterna status booleano
-		const __ModuleName__ = await __TitleModuleName__.findOne({ _id: new ObjectId(__ModuleName__Id) });
-		if (!__ModuleName__) return { error: "Não encontrado." };
+		try {
+			// Alterna status booleano
+			const __ModuleName__ = await __TitleModuleName__.findOne({ _id: new ObjectId(__ModuleName__Id) });
+			if (!__ModuleName__) {
+				const err = new Error("Não encontrado.");
+				err.status = 404;
+				throw err;
+			}
 
-		const newStatus = !__ModuleName__.status;
+			const newStatus = !__ModuleName__.status;
 
-		await __TitleModuleName__.updateOne(
-			{ _id: new ObjectId(__ModuleName__Id) },
-			{ $set: { status: newStatus, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
-		);
-		return { message: `Status ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
+			await __TitleModuleName__.updateOne(
+				{ _id: new ObjectId(__ModuleName__Id) },
+				{ $set: { status: newStatus, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
+			);
+			return { message: `Status ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
+		} catch (error) {
+			if (error.status) throw error;
+			const err = new Error("ID inválido.");
+			err.status = 400;
+			throw err;
+		}
 	}
 }
 

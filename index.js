@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 const app = express();
-const port = 3000
+const port = 3330
 
 // passa a aplicação para application/json
 app.use(express.json());
@@ -34,7 +34,7 @@ app.use("/v1", cors(corsOptions), version1Router);
 //main
 app.get('/', (req, res) => {
 
-  return res.send("API V1 CORENODEJS API");
+  return res.send("API CORENODEJS API (/v1/ available)");
 
 });
 
