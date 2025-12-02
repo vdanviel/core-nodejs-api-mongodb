@@ -20,6 +20,22 @@ customerRouter.get('/me', isAuth, checkScope("read:customer"), (req, res) => {
 
 });
 
+// Buscar todos paginado
+customerRouter.get('/all', [
+	query('page').optional().exists().withMessage('O page precisa estar presente.'),
+	query('size').optional().exists().withMessage('O size precisa estar presente.'),
+	query('search').optional().exists().withMessage('O search precisa estar presente.')
+],isAuth, checkScope("read:customer"), (req, res) => {
+	customerController.all(req.query.page, req.query.size, req.query.search)
+		.then(result => {
+			res.send(result);
+		})
+		.catch(error => {
+			
+			res.status(error.status || 500).send({ error: error.message });
+		});
+});
+
 customerRouter.post('/register', [
         body('name').exists().withMessage("Nome é obrigatório.").notEmpty().withMessage("Preencha o nome."),
         body('email').exists().withMessage("Email é obrigatório.").isEmail().withMessage("Email Inválido.").notEmpty().withMessage("Preencha o email."),

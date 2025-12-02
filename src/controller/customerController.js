@@ -36,6 +36,35 @@ class Controller {
         }
     }
 
+    async all(page = 1, size = 10, search = '') {
+
+        page = parseInt(page);
+        size = parseInt(size);
+
+        const skip = (page - 1) * size;
+
+        const filter = search ? {
+            $or: [
+                { value_1: { $regex: new RegExp(search, 'i') } },
+                { value_2: { $regex: new RegExp(search, 'i') } },
+                { value_3: { $regex: new RegExp(search, 'i') } }
+            ]
+        } : {};
+
+        const customer = await Customer.find(filter).skip(skip).limit(size).toArray();
+
+        const qyt = customer.length;
+        const total = await Customer.countDocuments(filter);
+
+		return {
+			data: customer,
+			total: total,
+            quantity: qyt,
+           	totalPages: Math.ceil(total / size)
+		};
+
+    }
+
     async register(name, email, password, phone){
         // Verifica se email já existe
         if (email) {
