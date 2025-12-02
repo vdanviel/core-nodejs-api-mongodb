@@ -41,13 +41,6 @@ class Controller {
         const qyt = __ModuleName__.length;
         const total = await __TitleModuleName__.countDocuments(filter);
 
-		if (__ModuleName__.length == 0) {
-			const err = new Error("Não há __ModuleName__s registrados(a).");
-			err.status = 404;
-			err.code = "no-records-found";
-			throw err;
-		}
-
 		return {
 			data: __ModuleName__,
 			total: total,
