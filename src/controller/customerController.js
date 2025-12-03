@@ -1,10 +1,10 @@
-import { Customer } from "../model/customer.js";
-import { PersonalAccessTokenController } from "./access/personalAccessTokenController.js";
-import { authController } from "./access/authController.js";
-import { roleController } from "./access/roleController.js";
+import { Customer } from "../../model/account/customer.js";
+import { PersonalAccessTokenController } from "../access/personalAccessTokenController.js";
+import { authController } from "../access/authController.js";
+import { roleController } from "../access/roleController.js";
 
-import Util from "../util/util.js";
-import { sender as mailSender } from "../mail/sender.js";
+import Util from "../../util/util.js";
+import { sender as mailSender } from "../../mail/sender.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
@@ -140,22 +140,13 @@ class Controller {
         //achar as roles associada ao tipo de usuário (customer) que no caso é "customer-role"
         const role = await roleController.find("customer-role");
 
-        //verificar se vai encontrar o o segredo JWT...
-        const secret = process.env.JWT_SECRET;
-
-        if (!secret) {
-            const err = new Error("JWT secret is not configured.");
-            err.status = 500;
-            throw err;
-        }
-
         //aqui ele vai criar o objeto "data" a partir do auth ou seja quem será armazenado e acessado em customerRouter é o própio objeto auth
         const encodedJwt = jwt.sign(
         {
             data: currentAuth,
             scope: Array.isArray(role && role.permissions) ? role.permissions : []
         }
-        ,secret, { expiresIn: '168h' });
+        ,process.env.JWT_SECRET, { expiresIn: '168h' });
 
         return { access_token: encodedJwt };
     }
@@ -187,20 +178,6 @@ class Controller {
             throw err;
         }
     }
-
-    // async delete(customerId){
-    //     try {
-    //         const result = await Customer.deleteOne({ _id: new ObjectId(customerId) });
-            
-    //         if (result.deletedCount === 0) {
-    //             return { error: "Usuário não existe." };
-    //         }
-
-    //         return { message: "Usuário deletado com sucesso." };
-    //     } catch (error) {
-    //         return { error: "ID inválido." };
-    //     }
-    // }
 
     async findByEmail(customerEmail){
         const foundCustomer = await Customer.findOne({ email: customerEmail });
@@ -261,7 +238,7 @@ class Controller {
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1hr
 
         await PersonalAccessTokenController.register(
-            "forgot_password", 
+            "customer_forgot_password", 
             customer._id, 
             customer.name, 
             secretWord, 
@@ -353,7 +330,7 @@ class Controller {
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1hr
 
         await PersonalAccessTokenController.register(
-            "change_email",
+            "customer_change_email",
             customer._id,
             newEmail,
             secretWord,

@@ -98,7 +98,7 @@ __ModuleName__Router.delete('/delete/:id', (req, res) => {
 });
 
 // Alternar status
-__ModuleName__Router.patch('/toggle-status/:id', (req, res) => {
+__ModuleName__Router.patch('/:id/status', (req, res) => {
 	__ModuleName__Controller.toggleStatus(req.params.id)
 		.then(result => {
 			res.send(result);

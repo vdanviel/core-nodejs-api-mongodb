@@ -5,6 +5,10 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const isAuth = (req, res, next) => {
+    if (!req || !req.headers) {
+        return res.status(400).json({ error: 'Invalid request object' });
+    }
+
     const authHeader = req.headers['authorization'];
     const bearerToken = authHeader && authHeader.split(' ')[1]; // Se o cabeçalho existir, ele divide o conteúdo por espaço e pega o segundo item (o token em si)
 
@@ -13,8 +17,10 @@ const isAuth = (req, res, next) => {
     }
 
     jwt.verify(bearerToken, JWT_SECRET, (err, decoded) => {
+        
         if (err) {
-            return res.status(403).json({ jwt_timeout: 'Invalid or expired token.' });
+            console.log(err);
+            return res.status(403).json({ jwt_invalid: 'Invalid or expired token.' });
         }
         
         req.auth = decoded;

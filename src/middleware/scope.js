@@ -10,11 +10,11 @@ const checkScope = (requiredScope) => {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (!decoded.scope || !decoded.scope.includes(requiredScope)) {
-                return res.status(403).json({ message: 'Not allowed. Insufficient permission.' });
+                return res.status(403).json({ scope_error: 'Not allowed. Insufficient permission.' });
             }
             next();
         } catch (err) {
-            return res.status(401).json({ message: 'Invalid or expired token.' });
+            return res.status(401).json({ jwt_invalid: 'Invalid or expired token.' });
         }
 
     };

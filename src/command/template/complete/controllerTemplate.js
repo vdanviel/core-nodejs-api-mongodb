@@ -14,40 +14,53 @@ class Controller {
 			}
 			return __ModuleName__;
 		} catch (error) {
-			if (error.status) throw error;
-			const err = new Error("ID inválido.");
+            Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
+			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
 			err.status = 400;
 			throw err;
 		}
 	}
 
-    async all(page = 1, size = 10, search = '') {
-
-        page = parseInt(page);
-        size = parseInt(size);
-
+   async all(page = 1, size = 10, search = '', startDate, endDate) {
+        page = Math.max(1, parseInt(page) || 1);
+        size = Math.max(1, parseInt(size) || 10);
         const skip = (page - 1) * size;
 
-        const filter = search ? {
-            $or: [
-                { value_1: { $regex: new RegExp(search, 'i') } },
-                { value_2: { $regex: new RegExp(search, 'i') } },
-                { value_3: { $regex: new RegExp(search, 'i') } }
-            ]
-        } : {};
+        const filter = {};
+
+        // search
+        if (search) {
+            const re = new RegExp(search, 'i');
+            filter.$or = [
+            { value_1: { $regex: re } },
+            { value_2: { $regex: re } },
+            { value_3: { $regex: re } }
+            ];
+        }
+
+        // date range
+        const sd = startDate ? new Date(startDate) : null;
+        const ed = endDate ? new Date(endDate) : null;
+        if ((sd && !isNaN(sd.valueOf())) || (ed && !isNaN(ed.valueOf()))) {
+            const range = {};
+            if (sd && !isNaN(sd.valueOf())) range.$gte = sd;
+            if (ed && !isNaN(ed.valueOf())) {
+                const edAdj = new Date(ed);
+                edAdj.setHours(23, 59, 59, 999);
+                range.$lte = edAdj;
+            }
+            filter.begin_date = range;
+        }
 
         const __ModuleName__ = await __TitleModuleName__.find(filter).skip(skip).limit(size).toArray();
-
-        const qyt = __ModuleName__.length;
         const total = await __TitleModuleName__.countDocuments(filter);
 
-		return {
-			data: __ModuleName__,
-			total: total,
-            quantity: qyt,
-           	totalPages: Math.ceil(total / size)
-		};
-
+        return {
+            data: __ModuleName__,
+            total,
+            quantity: __ModuleName__.length,
+            totalPages: Math.ceil(total / size)
+        };
     }
 
 	async create(value1, value2, value3) {
@@ -138,7 +151,7 @@ class Controller {
             return await this.find(__ModuleName__Id);
         } catch (error) {
             if (error.status) throw error;
-            const err = new Error("ID inválido.");
+            const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
             err.status = 400;
             throw err;
         }
@@ -156,8 +169,8 @@ class Controller {
 			}
 			return { message: "Deletado com sucesso." };
 		} catch (error) {
-			if (error.status) throw error;
-			const err = new Error("ID inválido.");
+            Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
+			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
 			err.status = 400;
 			throw err;
 		}
@@ -181,8 +194,8 @@ class Controller {
 			);
 			return { message: `Status ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
 		} catch (error) {
-			if (error.status) throw error;
-			const err = new Error("ID inválido.");
+            Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
+			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
 			err.status = 400;
 			throw err;
 		}

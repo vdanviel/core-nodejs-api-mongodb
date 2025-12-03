@@ -1,7 +1,7 @@
 import express from "express";
 import { isAuth } from "../middleware/auth.js";
 import { checkScope } from "../middleware/scope.js";
-import { body, validationResult, param } from "express-validator";
+import { body, validationResult, param, query } from "express-validator";
 import { CustomerController } from "../controller/customerController.js";
 
 const customerRouter = express.Router();
