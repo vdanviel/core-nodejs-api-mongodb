@@ -1,10 +1,10 @@
-import { Customer } from "../../model/account/customer.js";
-import { PersonalAccessTokenController } from "../access/personalAccessTokenController.js";
-import { authController } from "../access/authController.js";
-import { roleController } from "../access/roleController.js";
+import { Customer } from "../model/customer.js";
+import { PersonalAccessTokenController } from "./access/personalAccessTokenController.js";
+import { authController } from "./access/authController.js";
+import { roleController } from "./access/roleController.js";
 
-import Util from "../../util/util.js";
-import { sender as mailSender } from "../../mail/sender.js";
+import Util from "../util/util.js";
+import { sender as mailSender } from "../mail/sender.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
@@ -45,9 +45,9 @@ class Controller {
 
         const filter = search ? {
             $or: [
-                { value_1: { $regex: new RegExp(search, 'i') } },
-                { value_2: { $regex: new RegExp(search, 'i') } },
-                { value_3: { $regex: new RegExp(search, 'i') } }
+                { name: { $regex: new RegExp(search, 'i') } },
+                { email: { $regex: new RegExp(search, 'i') } },
+                { phone: { $regex: new RegExp(search, 'i') } }
             ]
         } : {};
 
@@ -134,7 +134,7 @@ class Controller {
             customerWithoutPassword._id,
             ip,
             userAgent,
-            "login"
+            "customer-login"
         )
 
         //achar as roles associada ao tipo de usuário (customer) que no caso é "customer-role"

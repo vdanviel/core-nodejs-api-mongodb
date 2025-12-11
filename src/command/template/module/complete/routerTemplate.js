@@ -33,9 +33,11 @@ __ModuleName__Router.get('/:id', (req, res) => {
 __ModuleName__Router.get('/', [
 	query('page').optional().exists().withMessage('O page precisa estar presente.'),
 	query('size').optional().exists().withMessage('O size precisa estar presente.'),
-	query('search').optional().exists().withMessage('O search precisa estar presente.')
+	query('search').optional().exists().withMessage('O search precisa estar presente.'),
+	query('startDate').optional().isISO8601().toDate().withMessage('O startDate deve ser uma data válida no formato ISO8601.'),
+	query('endDate').optional().isISO8601().toDate().withMessage('O endDate deve ser uma data válida no formato ISO8601.')
 ], (req, res) => {
-	__ModuleName__Controller.all(req.query.page, req.query.size, req.query.search)
+	__ModuleName__Controller.all(req.query.page, req.query.size, req.query.search, req.query.startDate, req.query.endDate)
 		.then(result => {
 			res.send(result);
 		})

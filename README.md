@@ -179,7 +179,8 @@ O comando base para uso é:
 ```plaintext
 npm run corenode
 ```
-### Geração de módulos (module)
+
+### Módulos (module)
 
 Um módulo reúne os elementos principais do padrão MVC: **Model**, **Controller** e **Router**.  
 Com os comandos `module <ação>`, é possível gerenciar automaticamente toda a estrutura de um módulo, acelerando o desenvolvimento e eliminando etapas repetitivas.
@@ -190,10 +191,29 @@ Com os comandos `module <ação>`, é possível gerenciar automaticamente toda a
 
 | Comando                                  | Descrição                        | Exemplo                                                  |
 |------------------------------------------|----------------------------------|----------------------------------------------------------|
-| `module generate user`                 | Cria um novo módulo vazio        | `npm run corenode module generate user`                  |
-| `module generate <name> --mode complete` | Cria um módulo preparado     | `npm run corenode module generate user --mode complete`  |
-| `module remove <name>`                   | Remove um módulo existente        | `npm run corenode module remove user`                    |
-| `module list`                            | Lista todos os módulos criados    | `npm run corenode module list`                           |
+| `module generate user`                 | Cria um novo módulo vazio          | `npm run corenode module generate user`                  |
+| `module generate <name> --mode complete` | Cria um módulo preparado         | `npm run corenode module generate user --mode complete`  |
+| `module remove <name>`                   | Remove um módulo existente       | `npm run corenode module remove user`                    |
+| `module list`                            | Lista todos os módulos criados   | `npm run corenode module list`                           |
+
+---
+
+### Ajudadores (helper)
+
+Um **helper** é uma camada auxiliar do controller, utilizada quando é necessário adicionar métodos além das operações básicas de CRUD.
+Por exemplo, se um método dentro do controller começar a ficar muito extenso ou complexo, você pode extrair parte dessa lógica para um helper dedicado. O helper deve seguir o mesmo nome do controller correspondente — se o controller se chamar `fooController.js`, então o helper deve ser `fooHelper.js`.
+Essa abordagem mantém o código mais organizado, modular e fácil de manter. Além disso, existem ferramentas e comandos que podem automatizar a criação desses helpers conforme o padrão definido.
+
+
+|Comando                                  | Descrição                        | Exemplo                                                  |
+|-----------------------------------------|----------------------------------|----------------------------------------------------------|
+| `helper create user`                    | Cria um novo helper              | `npm run corenode helper create user`                    |
+| `helper remove user`                    | Remove um helper do sistema      | `npm run corenode helper remove user`                    |
+| `helper list`                           | Lista todos os helpers presentes | `npm run corenode helper list`                           |
+
+
+
+
 
 ## Como a API é versionada em RESTFULL:
 

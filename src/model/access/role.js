@@ -19,7 +19,7 @@ class RoleModel {
       {
         $set: {
           name: "customer-role",
-          permissions: ["read:customer", "read:barber"],
+          permissions: ["read:customer", "write:customer", "update:customer", "delete:customer"],
           description: "Permissões (scope) do cliente padrão. Usado para gerar JWT no sistema web service.",
           status: true,
           createdAt: Util.currentDateTime('America/Sao_Paulo'),

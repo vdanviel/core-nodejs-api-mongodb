@@ -14,8 +14,8 @@ class ModuleGenerator {
         this.#modelPath = path.dirname(fileURLToPath(import.meta.url)) + "/../../model/";
         this.#controllerPath = path.dirname(fileURLToPath(import.meta.url)) + "/../../controller/";
         this.#routePath = path.dirname(fileURLToPath(import.meta.url)) + "/../../router/";
-        this.#templateFileEmptyPath = path.dirname(fileURLToPath(import.meta.url)) + "/../template/empty/";
-        this.#templateFileFilledPath = path.dirname(fileURLToPath(import.meta.url)) + "/../template/complete/";
+        this.#templateFileEmptyPath = path.dirname(fileURLToPath(import.meta.url)) + "/../module/template/empty/";
+        this.#templateFileFilledPath = path.dirname(fileURLToPath(import.meta.url)) + "/../module/template/complete/";
     }
 
     #validateModuleName(name) {

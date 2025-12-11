@@ -1,6 +1,7 @@
 // ferramenta command line para gerar arquitetura de modulos de forma automatica e mais
 
 import { ModuleGenerator } from "./src/command/generator/moduleGenerator.js";
+import { HelperGenerator } from "./src/command/generator/helperGenerator.js";
 import { Command } from 'commander';
 
 const program = new Command();
@@ -43,6 +44,45 @@ moduleCommand.command('list')
     const generator = new ModuleGenerator();
 
     console.log(await generator.listModules())
+
+  });
+
+// comandos de helper
+const helperCommand = program.command('helper')
+.description('Helper commands');
+
+// cria helper
+helperCommand.command('create')
+  .description("Create a new helper")
+  .argument('<name>', 'name of the helper')
+  .action(async (name, opt) => {
+
+      const helper = new HelperGenerator();
+
+      helper.generate(name);
+
+  });
+
+// remove helper
+helperCommand.command('remove')
+  .description("Remove a helper")
+  .argument('<name>', 'name of the helper')
+  .action(async (name) => {
+
+      const helper = new HelperGenerator();
+
+      helper.remove(name);
+
+  });
+
+// listar helpers
+helperCommand.command('list')
+  .description("List helpers")
+  .action(async () => {
+
+      const helper = new HelperGenerator();
+
+      console.log(await helper.listHelpers());
 
   });
 
