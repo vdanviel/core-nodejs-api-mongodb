@@ -3,6 +3,7 @@ import session from 'express-session';
 import { version1Router } from "./src/router/version/version1Router.js";
 import cors from 'cors';
 import dotenv from 'dotenv'
+import { errorHandler } from "./src/middleware/errorHandler.js";
 dotenv.config();
 
 const app = express();
@@ -34,7 +35,7 @@ app.use("/v1", cors(corsOptions), version1Router);
 //main
 app.get('/', (req, res) => {
 
-  return res.send("API CORENODEJS API (/v1/ available)");
+  return res.send("API CORENODEJS API");
 
 });
 

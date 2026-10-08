@@ -42,6 +42,17 @@ class Utils {
     return timezoneDate;
   }
 
+  static getCurrentEnroviment(){
+    cEnv = process.env.CURRENT_ENVIRONMENT;
+
+    if (cEnv == "prod") {
+      return "prod"
+    }else{
+      return "dev"
+    }
+
+  }
+
 }
 
 export default Utils;
