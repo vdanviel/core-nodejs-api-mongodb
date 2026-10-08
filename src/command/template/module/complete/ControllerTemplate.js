@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { __TitleModuleName__ } from "../model/__ModuleName__.js";
-import Util from "../util/util.js"; // Importa Util, utilitario do sistema
+import { __TitleModuleName__ } from "../model/__TitleModuleName__.js";
+import Util from "../util/Util.js"; // Importa Util, utilitario do sistema
 
 class Controller {
 	async find(id) {
@@ -16,50 +16,83 @@ class Controller {
 		} catch (error) {
             Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
 			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
-			err.status = 400;
+			err.status = 500;
 			throw err;
 		}
 	}
 
-   async all(page = 1, size = 10, search = '', startDate, endDate) {
-        page = Math.max(1, parseInt(page) || 1);
-        size = Math.max(1, parseInt(size) || 10);
-        const skip = (page - 1) * size;
+    async all(page = 1, size = 10, search = '', startDate, endDate) {
+        // 1. Sanitização e Configuração da Paginação
+        const safePage = Math.max(1, parseInt(page) || 1);
+        const safeSize = Math.max(1, parseInt(size) || 10);
+        const skip = (safePage - 1) * safeSize;
 
         const filter = {};
 
-        // search
+        // 2. Filtro de Busca (Search)
         if (search) {
             const re = new RegExp(search, 'i');
             filter.$or = [
-            { value_1: { $regex: re } },
-            { value_2: { $regex: re } },
-            { value_3: { $regex: re } }
+                { value_1: { $regex: re } },
+                { value_2: { $regex: re } },
+                { value_3: { $regex: re } }
             ];
         }
 
-        // date range
-        const sd = startDate ? new Date(startDate) : null;
-        const ed = endDate ? new Date(endDate) : null;
-        if ((sd && !isNaN(sd.valueOf())) || (ed && !isNaN(ed.valueOf()))) {
+        // 3. Filtro de Intervalo de Datas (Tratando como STRING)
+        // Precisamos garantir que startDate e endDate virem strings no mesmo formato do seu BD.
+        // Vou assumir o formato 'YYYY-MM-DD'.
+        if (startDate || endDate) {
             const range = {};
-            if (sd && !isNaN(sd.valueOf())) range.$gte = sd;
-            if (ed && !isNaN(ed.valueOf())) {
-                const edAdj = new Date(ed);
-                edAdj.setHours(23, 59, 59, 999);
-                range.$lte = edAdj;
+
+            if (startDate) {
+                // Valida se é uma data válida e converte para string YYYY-MM-DD
+                const sdObj = new Date(startDate);
+                if (!isNaN(sdObj.valueOf())) {
+                    // Pega a parte da data da string ISO (2023-10-25)
+                    const sdString = sdObj.toISOString().split('T')[0];
+                    range.$gte = sdString;
+                }
             }
-            filter.begin_date = range;
+
+            if (endDate) {
+                const edObj = new Date(endDate);
+                if (!isNaN(edObj.valueOf())) {
+                    // Para incluir o dia final inteiro numa comparação de string:
+                    // Se o banco tem apenas datas '2023-10-25', usamos a própria data.
+                    // Se o banco tem data e hora '2023-10-25 14:00', é mais seguro comparar
+                    // até o final do dia ou usar o dia seguinte.
+                    
+                    // Abordagem simples (apenas data):
+                    const edString = edObj.toISOString().split('T')[0];
+                    
+                    // Se no seu banco a string tiver HORA (ex: "2023-10-25 15:30"), 
+                    // você deve concatenar o final do dia na string de busca:
+                    // range.$lte = edString + " 23:59:59"; 
+                    
+                    range.$lte = edString;
+                }
+            }
+
+            // Aplica o filtro se houver algo no range
+            if (Object.keys(range).length > 0) {
+                filter.begin_date = range;
+            }
         }
 
-        const __ModuleName__ = await __TitleModuleName__.find(filter).skip(skip).limit(size).toArray();
+        // 4. Execução da Consulta
+        // Substitua '__TitleModuleName__' e '__ModuleName__' pelos nomes reais.
+        const __ModuleName__ = await __TitleModuleName__.find(filter).skip(skip).limit(safeSize).toArray(); // Se estiver usando driver nativo
+        // OU se estiver usando Mongoose, remova o .toArray() e use .exec() se necessário
+        
         const total = await __TitleModuleName__.countDocuments(filter);
 
+        // 5. Retorno dos Dados
         return {
             data: __ModuleName__,
             total,
             quantity: __ModuleName__.length,
-            totalPages: Math.ceil(total / size)
+            totalPages: Math.ceil(total / safeSize)
         };
     }
 
@@ -70,8 +103,8 @@ class Controller {
             value_2: value2,
             value_3: value3,
             status: true,
-            createdAt: Util.currentDateTime('America/Sao_Paulo'),
-            updatedAt: Util.currentDateTime('America/Sao_Paulo')
+            created_at: Util.currentDateTime('America/Sao_Paulo'),
+            updated_at: Util.currentDateTime('America/Sao_Paulo')
         };
 
         //restante dos dados...
@@ -84,7 +117,7 @@ class Controller {
 
         try {
         // Dados que podem ser atualizados
-        const updateData = {
+        const updated_ata = {
             value_1: value1,
             value_2: value2,
             value_3: value3
@@ -92,7 +125,7 @@ class Controller {
         };
         
         // 1. Constrói dinamicamente o objeto $set, processando apenas os valores definidos.
-        const fieldsToUpdate = Object.entries(updateData).reduce((acc, [key, value]) => {
+        const fieldsToUpdate = Object.entries(updated_ata).reduce((acc, [key, value]) => {
             // Ignora qualquer chave cujo valor seja estritamente undefined, ou seja, não está sendo atualizada.
             // Permite que campos sejam atualizados para `null`, `0`, `false` ou `""`.
             if (value !== undefined) {
@@ -132,7 +165,7 @@ class Controller {
             }
 
             // 3. Adiciona a data de atualização em toda modificação bem-sucedida.
-            fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
+            fieldsToUpdate.updated_at = Util.currentDateTime('America/Sao_Paulo');
 
             // 4. Executa a atualização no banco de dados.
             const result = await __TitleModuleName__.updateOne(
@@ -152,7 +185,7 @@ class Controller {
         } catch (error) {
             if (error.status) throw error;
             const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
     }
@@ -171,7 +204,7 @@ class Controller {
 		} catch (error) {
             Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
 			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
-			err.status = 400;
+			err.status = 500;
 			throw err;
 		}
 	}
@@ -190,17 +223,17 @@ class Controller {
 
 			await __TitleModuleName__.updateOne(
 				{ _id: new ObjectId(__ModuleName__Id) },
-				{ $set: { status: newStatus, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
+				{ $set: { status: newStatus, updated_at: Util.currentDateTime('America/Sao_Paulo') } }
 			);
 			return { message: `Status ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
 		} catch (error) {
             Util.logInFile(error.stack, 'error.log'); // loga o erro no error.log
 			const err = new Error("Aconteceu algum erro. Tente novamente mais tarde.");
-			err.status = 400;
+			err.status = 500;
 			throw err;
 		}
 	}
 }
 
-const __ModuleName__Controller = new Controller();
-export { __ModuleName__Controller };
+const __TitleModuleName__Controller = new Controller();
+export { __TitleModuleName__Controller };

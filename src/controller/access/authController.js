@@ -17,7 +17,7 @@ class Controller {
         } catch (error) {
             if (error.status) throw error;
             const err = new Error("ID inválido.");
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
 	}
@@ -63,8 +63,8 @@ class Controller {
             ip: ip,
             description: description,
             userAgent: userAgent,
-            createdAt: Util.currentDateTime('America/Sao_Paulo'),
-            updatedAt: Util.currentDateTime('America/Sao_Paulo')
+            created_at: Util.currentDateTime('America/Sao_Paulo'),
+            updated_at: Util.currentDateTime('America/Sao_Paulo')
         };
 
 		await Auth.insertOne(data);
@@ -73,14 +73,14 @@ class Controller {
 
     async update(authId, sub,ip, userAgent, description) {
 
-        const updateData = {
+        const updated_ata = {
             sub: sub,
             ip: ip,
             userAgent: userAgent,
             description: description
         };
         
-        const fieldsToUpdate = Object.entries(updateData).reduce((acc, [key, value]) => {
+        const fieldsToUpdate = Object.entries(updated_ata).reduce((acc, [key, value]) => {
             
             if (value !== undefined) {
 
@@ -96,7 +96,7 @@ class Controller {
             return await this.find(authId); 
         }
 
-        fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
+        fieldsToUpdate.updated_at = Util.currentDateTime('America/Sao_Paulo');
 
         const result = await Auth.updateOne(
             { _id: new ObjectId(authId) },

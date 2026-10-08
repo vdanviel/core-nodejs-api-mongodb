@@ -59,8 +59,8 @@ class Controller {
             permissions: permissions,
             description: description,
             status: true,
-            createdAt: Util.currentDateTime('America/Sao_Paulo'),
-            updatedAt: Util.currentDateTime('America/Sao_Paulo')
+            created_at: Util.currentDateTime('America/Sao_Paulo'),
+            updated_at: Util.currentDateTime('America/Sao_Paulo')
         };
 
         //restante dos dados...
@@ -71,13 +71,13 @@ class Controller {
     async update(roleId, name, permissions, description) {
 
         // Dados que podem ser atualizados
-        const updateData = {
+        const updated_ata = {
             name: name,
             permissions: permissions,
             description: description
         };
         
-        const fieldsToUpdate = Object.entries(updateData).reduce((acc, [key, value]) => {
+        const fieldsToUpdate = Object.entries(updated_ata).reduce((acc, [key, value]) => {
 
             if (value !== undefined) {
                 
@@ -96,7 +96,7 @@ class Controller {
             return await this.find(roleId); 
         }
 
-        fieldsToUpdate.updatedAt = Util.currentDateTime('America/Sao_Paulo');
+        fieldsToUpdate.updated_at = Util.currentDateTime('America/Sao_Paulo');
 
         const result = await Role.updateOne(
             { _id: new ObjectId(roleId) },
@@ -136,7 +136,7 @@ class Controller {
 
 		await Role.updateOne(
 			{ _id: new ObjectId(roleId) },
-			{ $set: { status: newStatus, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
+			{ $set: { status: newStatus, updated_at: Util.currentDateTime('America/Sao_Paulo') } }
 		);
 		return { message: `Status ${newStatus ? 'ativado' : 'desativado'} com sucesso.` };
 	}

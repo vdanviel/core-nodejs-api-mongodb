@@ -11,11 +11,6 @@ customerRouter.get('/me', isAuth, checkScope("read:customer"), (req, res) => {
     CustomerController.find(req.auth.data.sub)// acessando o objeto auth no JWT para pegar o id do auth, o metodo do controller vai pegar esse id e partir dele achar o id do customer...
     .then(customer => {
         return res.send(customer);
-    })
-    .catch(error => {
-        return res.status(error.status || 500).send({ 
-            error: error.message
-        });
     });
 
 });
@@ -29,10 +24,6 @@ customerRouter.get('/all', [
 	customerController.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -54,11 +45,6 @@ customerRouter.post('/register', [
         CustomerController.register(req.body.name, req.body.email, req.body.password,req.body.phone)
         .then(register => {
             return res.send(register);
-        })
-        .catch(error => {
-            return res.status(error.status || 500).send({ 
-                error: error.message
-            });
         });
 
 });
@@ -77,10 +63,6 @@ customerRouter.post('/login', [
         CustomerController.login(req.body.email, req.body.password, req.ip, req.get('user-agent') )
         .then(login => {       
             return res.send(login);
-        }).catch(error => {
-            return res.status(error.status || 500).send({ 
-            error: error.message
-            });
         });
 
 });
@@ -101,10 +83,6 @@ customerRouter.put('/update', [
         CustomerController.update(req.auth.data.sub, req.body.name, req.body.phone)
         .then(customer => {
             return res.send(customer);
-        }).catch(error => {
-            return res.status(error.status || 500).send({ 
-                error: error.message
-            });
         });
 
 });
@@ -116,10 +94,6 @@ customerRouter.put('/update', [
 //         CustomerController.delete(req.params.id)
 //         .then(customer => {
 //             return res.send(customer);
-//         }).catch(error => {
-//             return res.status(error.status || 500).send({ 
-//                 error: error.message,
-//  //             });
 //         });
 
 // });
@@ -135,8 +109,9 @@ customerRouter.post('/change-email/mail', [
     }
 
     CustomerController.sendChangeEmailCode(req.auth.data.sub, req.body.new_email)
-    .then(result => {return res.send(result)})
-    .catch(error => {return res.status(error.status || 500).send({ error: error.message })});
+    .then(result => {
+        return res.send(result)
+    });
 });
 
 // Altera o email do usuário após validação
@@ -152,8 +127,9 @@ customerRouter.patch('/change-email', [
     }
 
     CustomerController.changeEmail(req.auth.data.sub, req.body.new_email, req.body.code, req.body.secret)
-    .then(result => {return res.send(result)})
-    .catch(error => {return res.status(error.status || 500).send({ error: error.message })});
+    .then(result => {
+        return res.send(result)
+    })
 });
 
 //envia email de recuperação de senha
@@ -173,10 +149,6 @@ customerRouter.post('/forgot-password/mail', [
 
         return res.send(result);
 
-    }).catch(error => {
-        return res.status(error.status || 500).send({ 
-            error: error.message
-        });
     });
 
 });
@@ -200,10 +172,6 @@ customerRouter.patch('/update-password/', [
         CustomerController.changePassword(req.body.old_password, req.body.new_password, req.body.code, req.body.secret)
         .then(customer => {
             return res.send(customer);
-        }).catch(error => {
-            return res.status(error.status || 500).send({ 
-                error: error.message,
-            });
         });
 
 });
@@ -223,10 +191,6 @@ customerRouter.get('/:id', [
 
     CustomerController.find(req.params.id).then((customer) => {
         res.send(customer);
-    }).catch(error => {
-        return res.status(error.status || 500).send({ 
-            error: error.message
-        });
     });
 
 });
@@ -236,7 +200,7 @@ customerRouter.patch('/toogle-status', isAuth, checkScope("update:customer"), (r
     const validate = validationResult(req);
 
     if (!validate.isEmpty()) {
-        return res.status(400).send({
+        return res.status(500).send({
             missing: validate.array()
         });
     }
@@ -244,11 +208,8 @@ customerRouter.patch('/toogle-status', isAuth, checkScope("update:customer"), (r
     CustomerController.toggleStatus(req.auth.data.sub)
     .then(result => {
         return res.send(result);
-    }).catch(error => {
-        return res.status(error.status || 500).send({ 
-            error: error.message
-        });
     });
+
 });
 
 export {customerRouter};

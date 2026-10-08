@@ -23,10 +23,6 @@ authRouter.get('/:id', isAuth(), checkScope(['read:auth']), (req, res) => {
 	authController.find(req.params.id)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -39,10 +35,6 @@ authRouter.get('/', [
 	authController.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -52,17 +44,13 @@ authRouter.post('/register', validateData, isAuth(), checkScope(['write:auth']),
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		return res.status(500).json({ errors: errors.array() });
 	}
 
 	const { sub, ip, agent } = req.body;
 	authController.create(sub, ip, agent)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -72,17 +60,13 @@ authRouter.put('/update/:id', validateDataUpdated, isAuth(), checkScope(['update
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		return res.status(500).json({ errors: errors.array() });
 	}
 
 	const { sub, ip, agent } = req.body;
 	authController.update(req.params.id, sub, ip, agent)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -91,10 +75,6 @@ authRouter.delete('/delete/:id', isAuth(), checkScope(['delete:auth']), (req, re
 	authController.delete(req.params.id)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 

@@ -1,7 +1,7 @@
 import path from "node:path";
 import url from 'url';
 
-class Util {
+class Utils {
 
   static getTemplatePath(callerDir) {
     return path.dirname(url.fileURLToPath(callerDir));
@@ -44,4 +44,4 @@ class Util {
 
 }
 
-export default Util;
+export default Utils;

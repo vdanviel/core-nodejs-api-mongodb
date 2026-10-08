@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const isAuth = (req, res, next) => {
     if (!req || !req.headers) {
-        return res.status(400).json({ error: 'Invalid request object' });
+        return res.status(500).json({ error: 'Invalid request object' });
     }
 
     const authHeader = req.headers['authorization'];

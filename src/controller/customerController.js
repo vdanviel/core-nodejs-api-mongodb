@@ -31,7 +31,7 @@ class Controller {
         } catch (error) {
             if (error.status) throw error;
             const err = new Error("ID inválido.");
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
     }
@@ -89,8 +89,8 @@ class Controller {
             phone: phone,
             password: hash,
             status: true,
-            createdAt: Util.currentDateTime('America/Sao_Paulo'),
-            updatedAt: Util.currentDateTime('America/Sao_Paulo')
+            created_at: Util.currentDateTime('America/Sao_Paulo'),
+            updated_at: Util.currentDateTime('America/Sao_Paulo')
         };
 
         await Customer.insertOne(newCustomer);
@@ -159,7 +159,7 @@ class Controller {
                     $set: { 
                         name,
                         phone,
-                        updatedAt: Util.currentDateTime('America/Sao_Paulo')
+                        updated_at: Util.currentDateTime('America/Sao_Paulo')
                     }
                 }
             );
@@ -174,7 +174,7 @@ class Controller {
         } catch (error) {
             if (error.status) throw error;
             const err = new Error("ID inválido.");
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
     }
@@ -209,7 +209,7 @@ class Controller {
                 { 
                     $set: { 
                         status: newStatus,
-                        updatedAt: Util.currentDateTime('America/Sao_Paulo')
+                        updated_at: Util.currentDateTime('America/Sao_Paulo')
                     }
                 }
             );
@@ -218,7 +218,7 @@ class Controller {
         } catch (error) {
             if (error.status) throw error;
             const err = new Error("ID inválido.");
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
     }
@@ -266,7 +266,7 @@ class Controller {
 
         if(personalAT.error){
             const err = new Error(personalAT.error);
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
 
@@ -359,7 +359,7 @@ class Controller {
 
         if (personalAT.error) {
             const err = new Error(personalAT.error);
-            err.status = 400;
+            err.status = 500;
             throw err;
         }
 
@@ -396,7 +396,7 @@ class Controller {
 
         await Customer.updateOne(
             { _id: new ObjectId(personalAT.tokenable_id) },
-            { $set: { email: newEmail, updatedAt: Util.currentDateTime('America/Sao_Paulo') } }
+            { $set: { email: newEmail, updated_at: Util.currentDateTime('America/Sao_Paulo') } }
         );
 
         await PersonalAccessTokenController.deleteAllRelated(customer._id);

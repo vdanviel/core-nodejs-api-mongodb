@@ -24,10 +24,6 @@ roleRouter.get('/:id', isAuth(), checkScope(['read:role']), (req, res) => {
 	roleController.find(req.params.id)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -40,10 +36,6 @@ roleRouter.get('/', [
 	roleController.all(req.query.page, req.query.size, req.query.search)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -53,17 +45,13 @@ roleRouter.post('/register', validateData, isAuth(), checkScope(['write:role']),
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		return res.status(500).json({ errors: errors.array() });
 	}
 
 	const { name, permissions, description } = req.body;
 	roleController.create(name, permissions, description)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -73,17 +61,13 @@ roleRouter.put('/update/:id', isAuth(), checkScope(['update:role']), validateDat
 	// Validação dos dados recebidos
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		return res.status(500).json({ errors: errors.array() });
 	}
 
 	const { name, permissions, description } = req.body;
 	roleController.update(req.params.id, name, permissions, description)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 
@@ -92,10 +76,6 @@ roleRouter.patch('/toggle-status/:id', isAuth(), checkScope(['read:update']), (r
 	roleController.toggleStatus(req.params.id)
 		.then(result => {
 			res.send(result);
-		})
-		.catch(error => {
-			
-			res.status(error.status || 500).send({ error: error.message });
 		});
 });
 

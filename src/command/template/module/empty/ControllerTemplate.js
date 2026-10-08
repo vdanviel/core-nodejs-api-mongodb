@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { __TitleModuleName__ } from "../model/__ModuleName__.js";
-import Util from "../util/util.js"; // Importa Util, utilitario do sistema
+import { __TitleModuleName__ } from "../model/__TitleModuleName__.js";
+import Util from "../util/Util.js"; // Importa Util, utilitario do sistema
 
 class Controller {
 	

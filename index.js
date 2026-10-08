@@ -38,6 +38,9 @@ app.get('/', (req, res) => {
 
 });
 
+//middleware que lida com os erros nas rotas
+app.use(errorHandler);
+
 app.listen(port, () => {
   console.log(`API is running on ${port} port!`)
 });

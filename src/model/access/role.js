@@ -22,8 +22,8 @@ class RoleModel {
           permissions: ["read:customer", "write:customer", "update:customer", "delete:customer"],
           description: "Permissões (scope) do cliente padrão. Usado para gerar JWT no sistema web service.",
           status: true,
-          createdAt: Util.currentDateTime('America/Sao_Paulo'),
-          updatedAt: Util.currentDateTime('America/Sao_Paulo')
+          created_at: Util.currentDateTime('America/Sao_Paulo'),
+          updated_at: Util.currentDateTime('America/Sao_Paulo')
         }
       },
       { upsert: true }

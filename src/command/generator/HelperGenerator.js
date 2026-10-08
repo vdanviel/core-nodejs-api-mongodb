@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { CommandUtil } from '../CommandUtil.js';
 
 class HelperGenerator {
 
@@ -34,8 +35,8 @@ class HelperGenerator {
 
             console.log(`🚀 Creating helper (${name})...`);
 
-            let helperName = name.toLowerCase();
-            let titleHelperName = name.charAt(0).toUpperCase() + name.slice(1);
+            let helperName = CommandUtil.camelize(name, false);
+            let titleHelperName = CommandUtil.camelize(name, true);
 
             const replacements = {
                 "__ModuleName__": helperName,
@@ -44,7 +45,7 @@ class HelperGenerator {
 
             await this.#generateFile(
                 path.join(this.#templateFilePath, "helperTemplate.js"),
-                path.join(this.#helperPath, `${helperName}Helper.js`),
+                path.join(this.#helperPath, `${titleHelperName}Helper.js`),
                 replacements
             );
 

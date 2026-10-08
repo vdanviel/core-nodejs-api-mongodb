@@ -12,7 +12,7 @@ personalAccessTokenRouter.get('/code/verify/:code',[
     const validate = validationResult(req);
 
     if (validate.isEmpty() == false) {
-        return res.status(400).send({
+        return res.status(500).send({
             missing: validate.array()
         });
     }
@@ -21,11 +21,6 @@ personalAccessTokenRouter.get('/code/verify/:code',[
 
         return res.send(token);
 
-    }).catch(error => {
-        return res.status(500).send({ 
-            error: error.message,
-            trace: error.stack
-        });
     });
 
 });
@@ -38,7 +33,7 @@ personalAccessTokenRouter.get('/secret/verify/:secret',[
     const validate = validationResult(req);
 
     if (validate.isEmpty() == false) {
-        return res.status(400).send({
+        return res.status(500).send({
             missing: validate.array()
         });
     }
@@ -47,11 +42,6 @@ personalAccessTokenRouter.get('/secret/verify/:secret',[
 
         return res.send(token);
 
-    }).catch(error => {
-        return res.status(500).send({ 
-            error: error.message,
-            trace: error.stack
-        });
     });
 
 });
